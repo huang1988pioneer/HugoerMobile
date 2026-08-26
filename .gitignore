@@ -13,9 +13,14 @@ obj/
 ## Android
 *.apk
 *.aab
+*.keystore
+*.jks
 local.properties
+.gradle/
+android/**/build/
 
 ## iOS
 *.ipa
 *.dSYM.zip
 *.dSYM
+DerivedData/

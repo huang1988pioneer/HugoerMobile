@@ -1,10 +1,10 @@
 # HugoerMobile
 
-[Hugoer](https://github.com/huang1988pioneer/Hugoer) 桌面 Hugo 工作台的行動版副手 — 以 **.NET MAUI** 打造，可同時建置 **Android** 與 **iOS**，透過 GitHub REST API 管理 Hugo 網站的內容、設定與部署，介面依行動裝置操作習慣重新設計。
+[Hugoer](https://github.com/huang1988pioneer/Hugoer) 桌面 Hugo 工作台的行動版副手，採用 **Android 原生 Kotlin + Jetpack Compose** 與 **iOS 原生 Swift + SwiftUI** 分別實作，透過 GitHub REST API 管理 Hugo 網站內容、設定與部署。
 
 ## 為什麼手機版長得不一樣
 
-桌面版會呼叫本機 `hugo` / `git` / `gh` 執行檔並直接讀寫本機資料夾；這些在 iOS 上完全不可行，在 Android 上也不可靠。因此手機版定位為「Hugo 網站的隨身管理副手」：改以 **GitHub Contents / Actions / Pages REST API** 直接讀寫 repo，真正的 `hugo build` 交給桌面版已內建的 GitHub Actions workflow 執行。
+桌面版會呼叫本機 `hugo` / `git` / `gh` 執行檔並直接讀寫本機資料夾；這些在 iOS 上完全不可行，在 Android 上也不可靠。因此手機版定位為「Hugo 網站的隨身管理副手」：改以 **GitHub Contents / Actions / Pages REST API** 直接讀寫 repo，真正的 `hugo build` 交給 GitHub Actions 執行。
 
 完整設計理念、資訊架構圖、桌面／手機功能對照表，請見 [`DESIGN.md`](DESIGN.md)。
 
@@ -20,35 +20,80 @@
 
 ## 技術棧
 
-- **.NET MAUI**（`net10.0-android` / `net10.0-ios`），單一 C# 專案
-- `CommunityToolkit.Mvvm`、`CommunityToolkit.Maui`
-- `Markdig`（文章即時預覽）、`Tomlyn`（TOML 設定，與桌面版共用邏輯）
-- GitHub REST API + `SecureStorage`（PAT 安全儲存於 Keychain / Keystore）
+### Android 原生
+
+- Kotlin
+- Jetpack Compose + Material 3
+- Android ViewModel + StateFlow
+- OkHttp + Android `org.json`
+- `EncryptedSharedPreferences`（Android Keystore）儲存 GitHub PAT
+- Android WebView 顯示 Markdown 預覽
+
+### iOS 原生
+
+- Swift
+- SwiftUI + `TabView`
+- `ObservableObject` + `@Published` + Swift Concurrency (`async` / `await`)
+- `URLSession` + `Codable`
+- Keychain Services 儲存 GitHub PAT
+- `WKWebView` 顯示 Markdown 預覽
+
+兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser，並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。
 
 ## 專案結構
 
 ```
 HugoerMobile/
-  HugoerMobile.csproj
-  MauiProgram.cs / App.xaml / AppShell.xaml
-  Platforms/Android, Platforms/iOS
-  Models/        資料模型
-  Services/      GitHubApiService、TomlParamsService、FrontMatterService、MarkdownPreviewService…
-  ViewModels/    CommunityToolkit.Mvvm ObservableObject + RelayCommand
-  Views/         Shell 分頁與子頁面 XAML
-  Converters/    XAML 值轉換器
-  Resources/     圖示、樣式（Colors.xaml / Styles.xaml）
+  android/                 Android 原生 Kotlin + Jetpack Compose
+    app/src/main/java/com/hugoer/mobile/
+  ios/                     iOS 原生 Swift + SwiftUI
+    HugoerMobile/
+  legacy-maui/             第一版 .NET MAUI 原型，僅供邏輯參考
+  DESIGN.md                完整產品與行動 UI 設計
 ```
 
-## 建置
+## 建置 Android
 
 ```bash
-dotnet workload install maui
-cd HugoerMobile
-dotnet build -f net10.0-android
-# iOS 需在 macOS 安裝 Xcode
-dotnet build -f net10.0-ios
+cd android
+JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home \
+ANDROID_HOME=/opt/homebrew/share/android-commandlinetools \
+ANDROID_SDK_ROOT=/opt/homebrew/share/android-commandlinetools \
+gradle :app:assembleDebug :app:assembleRelease
 ```
+
+產物：
+
+```
+android/app/build/outputs/apk/debug/app-debug.apk
+android/app/build/outputs/apk/release/app-release.apk
+```
+
+目前 release APK 使用本機測試用自簽名 keystore，適合 sideload／測試，不是 Google Play production signing key。正式發布前請改用自己的 keystore，並透過環境變數提供簽署設定。
+
+## 建置 iOS
+
+產生 Xcode project 並建置 Simulator 版本：
+
+```bash
+cd ios
+xcodegen generate
+xcodebuild build \
+  -project HugoerMobile.xcodeproj \
+  -scheme HugoerMobile \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -sdk iphonesimulator \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+目前已驗證 iOS Simulator build 成功。可安裝到 App Store、TestFlight 或實機的正式 `.ipa` 必須使用 Apple Developer certificate、provisioning profile 與 team，不能使用無簽名 Simulator `.app` 取代。
+
+正式 IPA 建置需要設定：
+
+- Apple Developer Team ID
+- Distribution certificate
+- Provisioning profile
+- App Store Connect／TestFlight 發布權限
 
 ## GitHub Personal Access Token 權限
 
@@ -58,6 +103,12 @@ dotnet build -f net10.0-ios
 - Actions：Read and write
 - Pages：Read and write
 - Metadata：Read-only
+
+## 發布狀態
+
+- Android release APK：已建置並附加於 GitHub Release
+- iOS native source：已提交，Simulator build 已驗證
+- iOS production IPA：需 Apple Developer signing credentials，待設定後才能產生
 
 ## 授權
 

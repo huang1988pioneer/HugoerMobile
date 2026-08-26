@@ -1,0 +1,480 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		17EA38D3BD24DA13AD592F95 /* ConnectSiteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570879D2E1EC1474BE19A5DE /* ConnectSiteViewModel.swift */; };
+		180C1F31289D6D46C8334DA0 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54001C5F43D50E711B06BEC6 /* KeychainTokenStore.swift */; };
+		1A69EECE2DF6688104232223 /* GitHubApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7717D3F35E36D916649C4024 /* GitHubApiService.swift */; };
+		23D019BEB42C81AABA963780 /* ContentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD60818D0998D8E695A65FD /* ContentItem.swift */; };
+		2D5E80153B666376FFA3BF32 /* ConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCEEDD5B3AEB5EE746FF425 /* ConfigView.swift */; };
+		319058CE1762DCCA22867858 /* ContentEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC4854B61ED02AAAA2F817 /* ContentEditorViewModel.swift */; };
+		3CCAD391E362C0A87BE80043 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B78552916648700B78A542 /* SettingsView.swift */; };
+		43638677134922C607314413 /* ContentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07CA2210BA6F9E86C6C467D /* ContentEditorView.swift */; };
+		46AFECACDECBA00BA2C14721 /* GitHubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95412CD95D93F7728A6D0C1F /* GitHubViewModel.swift */; };
+		5B41D3A51F17B57B390F6FC3 /* ThemesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99713D587C53A20B303F43DA /* ThemesView.swift */; };
+		5D56CBD9CC0E742C49BB9909 /* NoActiveSiteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */; };
+		61846C1BF8525ABF5DF3E216 /* GitHubApiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED71AA96F7AC1E585E8AC894 /* GitHubApiModels.swift */; };
+		66D0F284F79955BF2F7D4FFA /* ActiveSiteState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5552BA3CACC54D226F14820E /* ActiveSiteState.swift */; };
+		6BFB5FB849026D018097BA10 /* ThemesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019AC98A734FF6324CDF573D /* ThemesViewModel.swift */; };
+		722B0404A9625699238E3163 /* TomlParamsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B03AB9754C694A12E0D49CD /* TomlParamsService.swift */; };
+		78EC0C99863DC0A24E09732F /* FrontMatterDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3538BD1AF9E960F3E00239C7 /* FrontMatterDocument.swift */; };
+		7ADB0558A50554D6210E911C /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B276434D860FB15DE38E98 /* RootTabView.swift */; };
+		92FCF33611C42EE11BF6675A /* FrontMatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E269E89081396ACE734FB01 /* FrontMatterService.swift */; };
+		938F5193D780D637C04B5F76 /* ConfigLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0ABAE30753F39BF5D5E5A1 /* ConfigLocator.swift */; };
+		954C4004EE596FA6A7C6B351 /* GitHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F77AF86F44BA418BE0C747B /* GitHubView.swift */; };
+		9E69AB19582CAC8E9A86D6F0 /* GitHubRepositoryTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 085C4F0AE5AE33FBB3E161FE /* GitHubRepositoryTarget.swift */; };
+		A35FB2E81FA811B22B518AAF /* MarkdownPreviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F70AAA1E1D59D79C7F3B621 /* MarkdownPreviewService.swift */; };
+		A45985C3C24FDC2C857BC2AF /* ThemeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF1106068D9503481FB7E07 /* ThemeInfo.swift */; };
+		AC827D72B8B6549C8F60E3B4 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6498ED2F64282B61E4BA237E /* ContentViewModel.swift */; };
+		B222291B258606459365813D /* SiteProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB53EA0BB4C2B9C3FCEB5E2 /* SiteProfileStore.swift */; };
+		BF1D9A83235ECE6A62315E36 /* TomlLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0639D5AB4476225255CF79B /* TomlLite.swift */; };
+		C11D534E0D9F718125EFFD85 /* SitesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C1E25ED93E69126589647C /* SitesView.swift */; };
+		CCAFCF160906AF5F1A6926E1 /* ThemeCatalogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE5F3F47C12B85ACD79F05E /* ThemeCatalogService.swift */; };
+		CE73626744B3D79596EA8C77 /* ConfigViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7825343F0929B4F39AF5C2DB /* ConfigViewModel.swift */; };
+		D0AFBA3DEA6B54FD9904DB25 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 268C94EB8C749388A4F79C81 /* AppState.swift */; };
+		DF7353E878F20D47E1B158CB /* HugoerMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BADF3FE39F347BC5D34CC3A /* HugoerMobileApp.swift */; };
+		E6D927D675909E66015DC03C /* MarkdownWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BA22A00DB83453DF2E7406 /* MarkdownWebView.swift */; };
+		EB7BBCCD1AB252C4D49FD801 /* MiniMarkdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C6C59C2F68F659F4E30321 /* MiniMarkdown.swift */; };
+		F93CD56C7C4222ACFA27926F /* ParamFieldItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1804685E8E2156C5BA12268 /* ParamFieldItem.swift */; };
+		F99CCBA90307F61EAFF91DC4 /* ContentBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C99294C02D1299B15CF21E /* ContentBrowserView.swift */; };
+		F9D50DCF73988B0073268AA4 /* SiteProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB3C48997DBFA523C8A827E /* SiteProfile.swift */; };
+		FBEDD27B33C1A6F6C712E9F0 /* ConnectSiteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF27756B53A61F0F21F1D /* ConnectSiteView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		019AC98A734FF6324CDF573D /* ThemesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesViewModel.swift; sourceTree = "<group>"; };
+		085C4F0AE5AE33FBB3E161FE /* GitHubRepositoryTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubRepositoryTarget.swift; sourceTree = "<group>"; };
+		10CF843C091579A84BB186A3 /* HugoerMobile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HugoerMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		268C94EB8C749388A4F79C81 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		2B03AB9754C694A12E0D49CD /* TomlParamsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TomlParamsService.swift; sourceTree = "<group>"; };
+		2C0ABAE30753F39BF5D5E5A1 /* ConfigLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigLocator.swift; sourceTree = "<group>"; };
+		3538BD1AF9E960F3E00239C7 /* FrontMatterDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontMatterDocument.swift; sourceTree = "<group>"; };
+		3BADF3FE39F347BC5D34CC3A /* HugoerMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HugoerMobileApp.swift; sourceTree = "<group>"; };
+		3F77AF86F44BA418BE0C747B /* GitHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubView.swift; sourceTree = "<group>"; };
+		44B276434D860FB15DE38E98 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		4DCEEDD5B3AEB5EE746FF425 /* ConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigView.swift; sourceTree = "<group>"; };
+		4E269E89081396ACE734FB01 /* FrontMatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontMatterService.swift; sourceTree = "<group>"; };
+		50C1E25ED93E69126589647C /* SitesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitesView.swift; sourceTree = "<group>"; };
+		54001C5F43D50E711B06BEC6 /* KeychainTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTokenStore.swift; sourceTree = "<group>"; };
+		5552BA3CACC54D226F14820E /* ActiveSiteState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSiteState.swift; sourceTree = "<group>"; };
+		570879D2E1EC1474BE19A5DE /* ConnectSiteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectSiteViewModel.swift; sourceTree = "<group>"; };
+		5F70AAA1E1D59D79C7F3B621 /* MarkdownPreviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreviewService.swift; sourceTree = "<group>"; };
+		5FB53EA0BB4C2B9C3FCEB5E2 /* SiteProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteProfileStore.swift; sourceTree = "<group>"; };
+		5FE5F3F47C12B85ACD79F05E /* ThemeCatalogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCatalogService.swift; sourceTree = "<group>"; };
+		6498ED2F64282B61E4BA237E /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		7717D3F35E36D916649C4024 /* GitHubApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubApiService.swift; sourceTree = "<group>"; };
+		7825343F0929B4F39AF5C2DB /* ConfigViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigViewModel.swift; sourceTree = "<group>"; };
+		78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoActiveSiteView.swift; sourceTree = "<group>"; };
+		91C99294C02D1299B15CF21E /* ContentBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBrowserView.swift; sourceTree = "<group>"; };
+		95412CD95D93F7728A6D0C1F /* GitHubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubViewModel.swift; sourceTree = "<group>"; };
+		99713D587C53A20B303F43DA /* ThemesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesView.swift; sourceTree = "<group>"; };
+		A0639D5AB4476225255CF79B /* TomlLite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TomlLite.swift; sourceTree = "<group>"; };
+		A5BA22A00DB83453DF2E7406 /* MarkdownWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownWebView.swift; sourceTree = "<group>"; };
+		AB473295939FB6038F7E7230 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BCD60818D0998D8E695A65FD /* ContentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentItem.swift; sourceTree = "<group>"; };
+		C1804685E8E2156C5BA12268 /* ParamFieldItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParamFieldItem.swift; sourceTree = "<group>"; };
+		CAB3C48997DBFA523C8A827E /* SiteProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteProfile.swift; sourceTree = "<group>"; };
+		E1CCF27756B53A61F0F21F1D /* ConnectSiteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectSiteView.swift; sourceTree = "<group>"; };
+		E2CC4854B61ED02AAAA2F817 /* ContentEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentEditorViewModel.swift; sourceTree = "<group>"; };
+		E7C6C59C2F68F659F4E30321 /* MiniMarkdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMarkdown.swift; sourceTree = "<group>"; };
+		E8B78552916648700B78A542 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		EAF1106068D9503481FB7E07 /* ThemeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeInfo.swift; sourceTree = "<group>"; };
+		ED71AA96F7AC1E585E8AC894 /* GitHubApiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubApiModels.swift; sourceTree = "<group>"; };
+		F07CA2210BA6F9E86C6C467D /* ContentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentEditorView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0CDE1FAB456630F6E22885BC = {
+			isa = PBXGroup;
+			children = (
+				C1D1DB2F6E28DB16DFC57262 /* HugoerMobile */,
+				7F3606818FBA554301477EED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2B1DCA8F9517FBDEE0348D37 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4DCEEDD5B3AEB5EE746FF425 /* ConfigView.swift */,
+				E1CCF27756B53A61F0F21F1D /* ConnectSiteView.swift */,
+				91C99294C02D1299B15CF21E /* ContentBrowserView.swift */,
+				F07CA2210BA6F9E86C6C467D /* ContentEditorView.swift */,
+				3F77AF86F44BA418BE0C747B /* GitHubView.swift */,
+				A5BA22A00DB83453DF2E7406 /* MarkdownWebView.swift */,
+				78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */,
+				44B276434D860FB15DE38E98 /* RootTabView.swift */,
+				E8B78552916648700B78A542 /* SettingsView.swift */,
+				50C1E25ED93E69126589647C /* SitesView.swift */,
+				99713D587C53A20B303F43DA /* ThemesView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		46F20E46F12FD6B53CB24597 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				268C94EB8C749388A4F79C81 /* AppState.swift */,
+				7825343F0929B4F39AF5C2DB /* ConfigViewModel.swift */,
+				570879D2E1EC1474BE19A5DE /* ConnectSiteViewModel.swift */,
+				E2CC4854B61ED02AAAA2F817 /* ContentEditorViewModel.swift */,
+				6498ED2F64282B61E4BA237E /* ContentViewModel.swift */,
+				95412CD95D93F7728A6D0C1F /* GitHubViewModel.swift */,
+				019AC98A734FF6324CDF573D /* ThemesViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		6A835E9CA04ED19178D31937 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BCD60818D0998D8E695A65FD /* ContentItem.swift */,
+				3538BD1AF9E960F3E00239C7 /* FrontMatterDocument.swift */,
+				ED71AA96F7AC1E585E8AC894 /* GitHubApiModels.swift */,
+				085C4F0AE5AE33FBB3E161FE /* GitHubRepositoryTarget.swift */,
+				C1804685E8E2156C5BA12268 /* ParamFieldItem.swift */,
+				CAB3C48997DBFA523C8A827E /* SiteProfile.swift */,
+				EAF1106068D9503481FB7E07 /* ThemeInfo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7F3606818FBA554301477EED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				10CF843C091579A84BB186A3 /* HugoerMobile.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C1D1DB2F6E28DB16DFC57262 /* HugoerMobile */ = {
+			isa = PBXGroup;
+			children = (
+				AB473295939FB6038F7E7230 /* Info.plist */,
+				CD0180F2A20040031C064B45 /* App */,
+				6A835E9CA04ED19178D31937 /* Models */,
+				CB7D15921B6688AD170D08D0 /* Services */,
+				46F20E46F12FD6B53CB24597 /* ViewModels */,
+				2B1DCA8F9517FBDEE0348D37 /* Views */,
+			);
+			path = HugoerMobile;
+			sourceTree = "<group>";
+		};
+		CB7D15921B6688AD170D08D0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				5552BA3CACC54D226F14820E /* ActiveSiteState.swift */,
+				2C0ABAE30753F39BF5D5E5A1 /* ConfigLocator.swift */,
+				4E269E89081396ACE734FB01 /* FrontMatterService.swift */,
+				7717D3F35E36D916649C4024 /* GitHubApiService.swift */,
+				54001C5F43D50E711B06BEC6 /* KeychainTokenStore.swift */,
+				5F70AAA1E1D59D79C7F3B621 /* MarkdownPreviewService.swift */,
+				E7C6C59C2F68F659F4E30321 /* MiniMarkdown.swift */,
+				5FB53EA0BB4C2B9C3FCEB5E2 /* SiteProfileStore.swift */,
+				5FE5F3F47C12B85ACD79F05E /* ThemeCatalogService.swift */,
+				A0639D5AB4476225255CF79B /* TomlLite.swift */,
+				2B03AB9754C694A12E0D49CD /* TomlParamsService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CD0180F2A20040031C064B45 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3BADF3FE39F347BC5D34CC3A /* HugoerMobileApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		24CFE59CC696CD88C2B91773 /* HugoerMobile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FE861E0F6B3C4B230F41701 /* Build configuration list for PBXNativeTarget "HugoerMobile" */;
+			buildPhases = (
+				25D183370832947BCA3EB375 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HugoerMobile;
+			packageProductDependencies = (
+			);
+			productName = HugoerMobile;
+			productReference = 10CF843C091579A84BB186A3 /* HugoerMobile.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B32F78190D09EB19FDCD5D90 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 1ECEB690C8A85016BEC7C1AE /* Build configuration list for PBXProject "HugoerMobile" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0CDE1FAB456630F6E22885BC;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 7F3606818FBA554301477EED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				24CFE59CC696CD88C2B91773 /* HugoerMobile */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		25D183370832947BCA3EB375 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66D0F284F79955BF2F7D4FFA /* ActiveSiteState.swift in Sources */,
+				D0AFBA3DEA6B54FD9904DB25 /* AppState.swift in Sources */,
+				938F5193D780D637C04B5F76 /* ConfigLocator.swift in Sources */,
+				2D5E80153B666376FFA3BF32 /* ConfigView.swift in Sources */,
+				CE73626744B3D79596EA8C77 /* ConfigViewModel.swift in Sources */,
+				FBEDD27B33C1A6F6C712E9F0 /* ConnectSiteView.swift in Sources */,
+				17EA38D3BD24DA13AD592F95 /* ConnectSiteViewModel.swift in Sources */,
+				F99CCBA90307F61EAFF91DC4 /* ContentBrowserView.swift in Sources */,
+				43638677134922C607314413 /* ContentEditorView.swift in Sources */,
+				319058CE1762DCCA22867858 /* ContentEditorViewModel.swift in Sources */,
+				23D019BEB42C81AABA963780 /* ContentItem.swift in Sources */,
+				AC827D72B8B6549C8F60E3B4 /* ContentViewModel.swift in Sources */,
+				78EC0C99863DC0A24E09732F /* FrontMatterDocument.swift in Sources */,
+				92FCF33611C42EE11BF6675A /* FrontMatterService.swift in Sources */,
+				61846C1BF8525ABF5DF3E216 /* GitHubApiModels.swift in Sources */,
+				1A69EECE2DF6688104232223 /* GitHubApiService.swift in Sources */,
+				9E69AB19582CAC8E9A86D6F0 /* GitHubRepositoryTarget.swift in Sources */,
+				954C4004EE596FA6A7C6B351 /* GitHubView.swift in Sources */,
+				46AFECACDECBA00BA2C14721 /* GitHubViewModel.swift in Sources */,
+				DF7353E878F20D47E1B158CB /* HugoerMobileApp.swift in Sources */,
+				180C1F31289D6D46C8334DA0 /* KeychainTokenStore.swift in Sources */,
+				A35FB2E81FA811B22B518AAF /* MarkdownPreviewService.swift in Sources */,
+				E6D927D675909E66015DC03C /* MarkdownWebView.swift in Sources */,
+				EB7BBCCD1AB252C4D49FD801 /* MiniMarkdown.swift in Sources */,
+				5D56CBD9CC0E742C49BB9909 /* NoActiveSiteView.swift in Sources */,
+				F93CD56C7C4222ACFA27926F /* ParamFieldItem.swift in Sources */,
+				7ADB0558A50554D6210E911C /* RootTabView.swift in Sources */,
+				3CCAD391E362C0A87BE80043 /* SettingsView.swift in Sources */,
+				F9D50DCF73988B0073268AA4 /* SiteProfile.swift in Sources */,
+				B222291B258606459365813D /* SiteProfileStore.swift in Sources */,
+				C11D534E0D9F718125EFFD85 /* SitesView.swift in Sources */,
+				CCAFCF160906AF5F1A6926E1 /* ThemeCatalogService.swift in Sources */,
+				A45985C3C24FDC2C857BC2AF /* ThemeInfo.swift in Sources */,
+				5B41D3A51F17B57B390F6FC3 /* ThemesView.swift in Sources */,
+				6BFB5FB849026D018097BA10 /* ThemesViewModel.swift in Sources */,
+				BF1D9A83235ECE6A62315E36 /* TomlLite.swift in Sources */,
+				722B0404A9625699238E3163 /* TomlParamsService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1C41677E0081465EE602D412 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hugoer.mobile;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3FF71FACEC2186BDF6C72DF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hugoer.mobile;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		865BA2E4A8691F8FB4B61683 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = HugoerMobile/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
+				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
+				INFOPLIST_KEY_CFBundleVersion = 1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DB51A786C84D8C587A126378 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = HugoerMobile/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
+				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
+				INFOPLIST_KEY_CFBundleVersion = 1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1ECEB690C8A85016BEC7C1AE /* Build configuration list for PBXProject "HugoerMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C41677E0081465EE602D412 /* Debug */,
+				3FF71FACEC2186BDF6C72DF1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3FE861E0F6B3C4B230F41701 /* Build configuration list for PBXNativeTarget "HugoerMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB51A786C84D8C587A126378 /* Debug */,
+				865BA2E4A8691F8FB4B61683 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B32F78190D09EB19FDCD5D90 /* Project object */;
+}

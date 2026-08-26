@@ -18,14 +18,11 @@
 
 ## 2. 技術選型
 
-- **.NET MAUI**（單一 C# 專案，同時產出 Android / iOS），原因：
-  - 與桌面版同語言（C#）、同 MVVM 慣例，`CommunityToolkit.Mvvm`、`Markdig`、`Tomlyn` 三個桌面版已用的套件可以**原封不動**在手機端使用（皆為純 .NET / 無 OS 相依）。
-  - `FrontMatterService`、`TomlParamsService` 的邏輯幾乎可以直接從桌面版移植（純字串/TOML 處理，無檔案系統相依），降低重工。
-  - 團隊只需維護一套 C# 邏輯即可涵蓋 Android + iOS + （未來）Mac Catalyst / Windows。
-- **CommunityToolkit.Maui**：RefreshView、Snackbar/Toast、載入指示器等行動 UX 元件。
+- **Android 原生 Kotlin + Jetpack Compose / Material 3**：使用 Android ViewModel + StateFlow、OkHttp、EncryptedSharedPreferences、Android WebView。
+- **iOS 原生 Swift + SwiftUI**：使用 ObservableObject + `@Published`、Swift Concurrency、URLSession、Keychain Services、WKWebView。
+- 兩個平台分別使用原生 UI 與安全儲存，符合各自的生命週期、無障礙、導覽與發布工具鏈；GitHub API、TOML、Front Matter、Markdown 的行為維持一致。
 - **GitHub REST API v3**（`api.github.com`）＋ Personal Access Token（PAT）：取代 `gh` CLI。
-- **Markdig**：本地即時把 Markdown body 轉 HTML，丟進 `WebView` 預覽（不含主題樣板，但足以檢查排版、圖片、程式碼區塊）。
-- **SecureStorage**（MAUI 內建，Android Keystore / iOS Keychain）：保存 GitHub PAT，絕不落地成一般偏好設定或明碼檔案。
+- 兩個原生版本都使用輕量、無第三方 parser 的 Markdown → HTML 預覽與 TOML reader/writer，避免跨平台 runtime 依賴。
 
 ## 3. 資訊架構（畫面地圖）
 
@@ -62,30 +59,30 @@ flowchart TD
 
 ## 4. 行動友善 UI 設計原則
 
-1. **底部分頁導覽（Shell TabBar）**：5 個常駐分頁，符合 iOS/Android 原生分頁慣例，優於桌面版的側邊/頂端分頁列。
-2. **單手可達的觸控目標**：可點擊列高 ≥ 48dp、按鈕最小 44×44pt，重要動作（儲存、部署）固定在畫面下緣的主要按鈕，而非工具列小圖示。
-3. **手勢取代選單**：內容列表用 `SwipeView` 左滑刪除，取代桌面版的右鍵選單；`RefreshView` 下拉重整取代手動「重新整理」按鈕。
-4. **漸進式表單**：設定檔/前置資料使用「分段（Segmented）＋ 摺疊區塊」，避免一次塞爆一個直向捲動的長表單。
-5. **離線可讀、線上可寫的取捨**：讀取結果（內容列表、設定檔）快取在記憶體/`Preferences`，離線時仍可瀏覽；任何寫入（儲存文章、套用設定、觸發部署）需要網路，並清楚呈現「未儲存」狀態與錯誤訊息（Snackbar）。
-6. **深色模式**：所有色彩以 `AppThemeBinding` 定義，跟隨系統外觀。
-7. **鍵盤最佳化**：baseURL 用 `Keyboard="Url"`、Tags/Categories 用逗號分隔的 Chips 輸入、Markdown 編輯器提供上方工具列（粗體/連結/圖片/程式碼）方便觸控插入語法。
-8. **危險操作二次確認**：刪除文章、覆蓋遠端設定前跳出 `DisplayAlert` 確認。
-9. **狀態先於資料**：GitHub 分頁優先呈現「目前建置狀態」大卡片（成功/建置中/失敗 的顏色與圖示），細節（歷史紀錄）往下捲動才看到。
+1. **原生底部分頁導覽**：Android 使用 Material 3 `NavigationBar`，iOS 使用 SwiftUI `TabView`，5 個常駐分頁符合平台慣例。
+2. **單手可達的觸控目標**：Android 可點擊列高 ≥ 48dp、iOS 按鈕最小 44×44pt，重要動作固定在畫面下緣的主要按鈕。
+3. **原生手勢取代選單**：Android 使用 `SwipeToDismissBox` / Pull-to-refresh，iOS 使用 `.swipeActions` / `.refreshable`。
+4. **漸進式表單**：設定檔/前置資料使用分段控制與摺疊區塊，避免一次塞爆直向長表單。
+5. **離線可讀、線上可寫的取捨**：讀取結果保留在 App 狀態與本機 profile；寫入、套用設定、觸發部署需要網路，並清楚呈現未儲存狀態與錯誤訊息。
+6. **深色模式**：Android Material 3 dynamic/dark color scheme；iOS 使用 SwiftUI semantic/system colors，跟隨系統外觀。
+7. **鍵盤最佳化**：baseURL 使用 URL keyboard；Tags/Categories 用逗號分隔；Markdown 編輯器提供適合觸控的編輯/預覽切換。
+8. **危險操作二次確認**：刪除文章、覆蓋遠端設定前跳出原生確認對話框。
+9. **狀態先於資料**：GitHub 分頁優先呈現建置狀態大卡片，細節往下捲動才看到。
 
 ## 5. 資料與服務對照
 
 | Model/Service（桌面 `Services/`） | 手機對應 | 說明 |
 | --- | --- | --- |
-| `ProcessRunner` + `git`/`gh` CLI | `Services/GitHubApiService.cs` | 改用 GitHub REST API（HttpClient + PAT） |
-| `ContentService`（本機檔案） | `ViewModels/ContentListViewModel.cs` + `GitHubApiService` Contents API | 以 repo 內 `content/` 目錄取代本機資料夾 |
-| `FrontMatterService` | `Services/FrontMatterService.cs` | **直接移植**，純字串處理 |
-| `TomlParamsService` | `Services/TomlParamsService.cs` | **直接移植**，僅依賴 Tomlyn |
-| `MarkdownPreviewService` | `Services/MarkdownPreviewService.cs` | 改為僅轉換單篇文章 body（Markdig），非整站樣板渲染 |
-| `HugoConfigService` | `ViewModels/ConfigViewModel.cs` + `ConfigLocator` | 依序嘗試 `hugo.toml` / `config.toml` / `config/_default/hugo.toml` 等常見路徑 |
-| `ThemeService`（本機安裝） | `Services/ThemeCatalogService.cs` | 靜態精選主題目錄 + 更新 `theme` 設定值；實際安裝主題導回桌面版 |
-| `GitHubService`（`gh`/`git` CLI） | `Services/GitHubApiService.cs` | 建 repo、推送、Actions workflow、Pages 狀態全部改走 REST API |
-| N/A | `Services/SecureTokenStore.cs` | PAT 安全儲存（Keychain/Keystore） |
-| N/A | `Services/SiteProfileStore.cs` | 多個已連結網站設定（不含 token）持久化 |
+| `ProcessRunner` + `git`/`gh` CLI | `android/.../GitHubApiService.kt` / `ios/.../GitHubApiService.swift` | 改用 GitHub REST API（OkHttp / URLSession + PAT） |
+| `ContentService`（本機檔案） | Android/iOS Content ViewModel + Contents API | 以 repo 內 `content/` 目錄取代本機資料夾 |
+| `FrontMatterService` | Android/iOS Front Matter service | 純字串處理，依照桌面版規則重寫 |
+| `TomlParamsService` | Android/iOS TOML services | 輕量 TOML reader/writer，保留 Hugo/Stack 常用欄位 |
+| `MarkdownPreviewService` | Android WebView / iOS WKWebView | 單篇文章 Markdown → HTML，非整站樣板渲染 |
+| `HugoConfigService` | Android/iOS Config ViewModel + ConfigLocator | 嘗試 `hugo.toml` / `config.toml` / `config/_default/hugo.toml` |
+| `ThemeService`（本機安裝） | Android/iOS ThemeCatalogService | 精選主題目錄 + 更新 `theme` 設定值；實際安裝導回桌面版 |
+| `GitHubService`（`gh`/`git` CLI） | Android/iOS GitHubApiService | Repo、Contents、Actions、Pages 全部改走 REST API |
+| N/A | Android EncryptedSharedPreferences / iOS Keychain | PAT 安全儲存 |
+| N/A | Android SharedPreferences / iOS Application Support JSON | 多個已連結網站設定（不含 token）持久化 |
 
 ## 6. GitHub Personal Access Token 權限需求
 
@@ -102,29 +99,20 @@ App 內「站台 → 新增網站」會呼叫 `GET /repos/{owner}/{repo}` 驗證
 
 ```
 HugoerMobile/
-  HugoerMobile.sln
-  HugoerMobile/
-    HugoerMobile.csproj
-    MauiProgram.cs
-    App.xaml(.cs)
-    AppShell.xaml(.cs)
-    Platforms/Android, Platforms/iOS
-    Models/            對應資料模型
-    Services/          GitHubApiService、TomlParamsService、FrontMatterService、MarkdownPreviewService、SecureTokenStore、SiteProfileStore、ThemeCatalogService
-    ViewModels/        CommunityToolkit.Mvvm ObservableObject + RelayCommand
-    Views/             Shell 分頁與子頁面 XAML
-    Resources/Styles    行動友善的顏色/樣式資源
+  android/                 Kotlin + Jetpack Compose 原生 Android App
+    app/src/main/java/com/hugoer/mobile/
+      data/ remote/ service/ toml/ ui/
+  ios/                     Swift + SwiftUI 原生 iOS App
+    HugoerMobile/Models, Services, ViewModels, Views
+    project.yml            XcodeGen 設定
+  legacy-maui/             第一版 .NET MAUI 原型（僅供參考）
 ```
 
-## 8. 建置需求
+## 8. 建置與發布需求
 
-```
-dotnet workload install maui
-```
-
-- Android：需要 Android SDK（可用 Android Studio 或 `dotnet workload install android`附帶的授權工具安裝）。
-- iOS：需要在 macOS 上安裝 Xcode，並透過「配對至 Mac」或直接在 Mac 上以 `dotnet build -t:Run -f net10.0-ios` 建置／偵錯。
-- 本沙盒環境未安裝 MAUI workload 與 Android/iOS SDK，因此**本次僅完成程式碼與專案結構的建立，未執行實機/模拟器建置驗證**；請在具備對應工作負載與 SDK 的機器上執行上列指令後再 `dotnet build`。
+- Android：需要 Android SDK、Java 17+、Gradle；`gradle :app:assembleRelease` 可產生 release APK。
+- iOS：需要 macOS、Xcode；`xcodebuild` 可建置 Simulator 版本。
+- iOS 正式 IPA：需要 Apple Developer Team、Distribution certificate、provisioning profile 與發布權限；沒有 signing credentials 時只能建置 Simulator `.app`，不能產生可安裝的正式 IPA。
 
 ## 9. 後續可擴充方向
 
