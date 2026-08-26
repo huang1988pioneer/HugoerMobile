@@ -1,0 +1,296 @@
+name: Build mobile releases
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version without the v prefix"
+        required: true
+        default: "1.0.0"
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+  ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+  APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+  APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+  APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+  APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+  APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+  IOS_EXPORT_OPTIONS_PLIST_BASE64: ${{ secrets.IOS_EXPORT_OPTIONS_PLIST_BASE64 }}
+  KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+jobs:
+  prepare:
+    name: Prepare release version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      ios_signing_configured: ${{ steps.signing.outputs.configured }}
+    steps:
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            version="$INPUT_VERSION"
+            tag="v$version"
+          else
+            tag="$GITHUB_REF_NAME"
+            version="${tag#v}"
+          fi
+
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Version must use the form X.Y.Z, got: $version" >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Check iOS signing configuration
+        id: signing
+        env:
+          CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ -n "$CERTIFICATE" ] && [ -n "$PROVISIONING_PROFILE" ] && [ -n "$TEAM_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "iOS signing secrets are not configured; the IPA job will be skipped."
+          fi
+
+  android:
+    name: Build Android APK
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Configure Android signing
+        run: |
+          set -euo pipefail
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/hugoer-release.keystore
+            test -s android/app/hugoer-release.keystore
+            echo "Android release signing is enabled."
+          else
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not configured; the APK will be unsigned."
+          fi
+
+      - name: Build release APK
+        env:
+          HUGOER_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          HUGOER_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          HUGOER_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          gradle --no-daemon --stacktrace \
+            -p android \
+            -PversionName="${{ needs.prepare.outputs.version }}" \
+            -PversionCode="${{ github.run_number }}" \
+            assembleRelease
+
+      - name: Stage APK
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk \
+            "dist/HugoerMobile-${{ needs.prepare.outputs.version }}-android.apk"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: dist/*.apk
+          if-no-files-found: error
+
+  ios:
+    name: Build iOS IPA
+    needs: prepare
+    if: needs.prepare.outputs.ios_signing_configured == 'true'
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Import Apple signing assets when configured
+        run: |
+          set -euo pipefail
+          if [ -n "$APPLE_CERTIFICATE_BASE64" ] && \
+             [ -n "$APPLE_PROVISIONING_PROFILE_BASE64" ] && \
+             [ -n "$APPLE_TEAM_ID" ]; then
+            keychain_path="$RUNNER_TEMP/hugoer-signing.keychain-db"
+            keychain_password="${KEYCHAIN_PASSWORD:-temporary-keychain-password}"
+            certificate_path="$RUNNER_TEMP/apple-distribution.p12"
+            profile_path="$RUNNER_TEMP/hugoer.mobileprovision"
+
+            printf '%s' "$APPLE_CERTIFICATE_BASE64" | base64 --decode > "$certificate_path"
+            printf '%s' "$APPLE_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$profile_path"
+
+            security create-keychain -p "$keychain_password" "$keychain_path"
+            security set-keychain-settings -lut 21600 "$keychain_path"
+            security unlock-keychain -p "$keychain_password" "$keychain_path"
+            security import "$certificate_path" -k "$keychain_path" \
+              -P "$APPLE_CERTIFICATE_PASSWORD" \
+              -T /usr/bin/codesign -T /usr/bin/security
+            security list-keychains -d user -s "$keychain_path"
+            security default-keychain -s "$keychain_path"
+            security set-key-partition-list -S apple-tool:,apple: \
+              -s -k "$keychain_password" "$keychain_path"
+
+            security cms -D -i "$profile_path" > "$RUNNER_TEMP/profile.plist"
+            profile_uuid=$(/usr/libexec/PlistBuddy -c 'Print:UUID' "$RUNNER_TEMP/profile.plist")
+            mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+            cp "$profile_path" \
+              "$HOME/Library/MobileDevice/Provisioning Profiles/$profile_uuid.mobileprovision"
+
+            echo "SIGNING_ENABLED=YES" >> "$GITHUB_ENV"
+            echo "IOS_PROFILE_UUID=$profile_uuid" >> "$GITHUB_ENV"
+            echo "IOS_KEYCHAIN_PATH=$keychain_path" >> "$GITHUB_ENV"
+          else
+            echo "Apple signing configuration was expected but is missing." >&2
+            exit 1
+          fi
+
+      - name: Archive iOS app
+        run: |
+          set -euo pipefail
+          archive_path="$RUNNER_TEMP/HugoerMobile.xcarchive"
+          signing_args=(
+            "MARKETING_VERSION=${{ needs.prepare.outputs.version }}"
+            "CURRENT_PROJECT_VERSION=${{ github.run_number }}"
+            "CODE_SIGNING_ALLOWED=$SIGNING_ENABLED"
+            "CODE_SIGNING_REQUIRED=$SIGNING_ENABLED"
+          )
+
+          if [ "$SIGNING_ENABLED" = "YES" ]; then
+            signing_args+=(
+              "CODE_SIGN_STYLE=Manual"
+              "DEVELOPMENT_TEAM=$APPLE_TEAM_ID"
+              "PROVISIONING_PROFILE_SPECIFIER=$IOS_PROFILE_UUID"
+              "CODE_SIGN_IDENTITY=${APPLE_SIGNING_IDENTITY:-Apple Distribution}"
+            )
+          fi
+
+          xcodebuild \
+            -project ios/HugoerMobile.xcodeproj \
+            -scheme HugoerMobile \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath "$archive_path" \
+            archive \
+            "${signing_args[@]}"
+
+      - name: Export or package IPA
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          archive_path="$RUNNER_TEMP/HugoerMobile.xcarchive"
+          ipa_path="dist/HugoerMobile-${{ needs.prepare.outputs.version }}-ios.ipa"
+
+          if [ "$SIGNING_ENABLED" = "YES" ]; then
+            export_options="$RUNNER_TEMP/ExportOptions.plist"
+            if [ -n "$IOS_EXPORT_OPTIONS_PLIST_BASE64" ]; then
+              printf '%s' "$IOS_EXPORT_OPTIONS_PLIST_BASE64" | base64 --decode > "$export_options"
+            else
+              cat > "$export_options" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>$APPLE_TEAM_ID</string>
+            <key>signingCertificate</key>
+            <string>${APPLE_SIGNING_IDENTITY:-Apple Distribution}</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.hugoer.mobile</key>
+              <string>$IOS_PROFILE_UUID</string>
+            </dict>
+          </dict>
+          </plist>
+          PLIST
+            fi
+
+            xcodebuild -exportArchive \
+              -archivePath "$archive_path" \
+              -exportPath "$RUNNER_TEMP/exported" \
+              -exportOptionsPlist "$export_options"
+            cp "$RUNNER_TEMP/exported/HugoerMobile.ipa" "$ipa_path"
+          else
+            echo "A signed iOS archive is required to create an installable IPA." >&2
+            exit 1
+          fi
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: dist/*.ipa
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    needs: [prepare, android, ios]
+    if: always() && needs.android.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download mobile packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-apk"
+          path: dist
+          merge-multiple: true
+
+      - name: Download iOS package
+        if: needs.ios.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-ipa"
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          name: Hugoer Mobile ${{ needs.prepare.outputs.tag }}
+          generate_release_notes: true
+          body: |
+            Mobile packages for Hugoer Mobile ${{ needs.prepare.outputs.version }}.
+
+            - Android: APK
+            - iOS: signed IPA when Apple signing secrets are configured; otherwise the iOS job is skipped
+          files: |
+            dist/*.apk
+            dist/*.ipa

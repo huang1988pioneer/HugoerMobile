@@ -4,6 +4,13 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val releaseVersionName = (project.findProperty("versionName") as? String)
+    ?.takeIf { it.isNotBlank() }
+    ?: "1.0.0"
+val releaseVersionCode = (project.findProperty("versionCode") as? String)
+    ?.toIntOrNull()
+    ?: 1
+
 android {
     namespace = "com.hugoer.mobile"
     compileSdk = 35
@@ -12,8 +19,8 @@ android {
         applicationId = "com.hugoer.mobile"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = releaseVersionCode
+        versionName = releaseVersionName
 
         vectorDrawables {
             useSupportLibrary = true
