@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HugoerMobile.ViewModels"
+             xmlns:models="clr-namespace:HugoerMobile.Models"
+             x:Class="HugoerMobile.Views.ConfigPage"
+             x:DataType="vm:ConfigViewModel"
+             Title="設定檔">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- 尚未連結任何網站時的空狀態 -->
+        <VerticalStackLayout Grid.RowSpan="2" IsVisible="{Binding HasActiveSite, Converter={StaticResource InverseBoolConverter}}"
+                             VerticalOptions="Center" Padding="32" Spacing="8">
+            <Label Text="請先在「站台」分頁連結或選擇一個 Hugo 網站" HorizontalTextAlignment="Center" Style="{StaticResource SubtitleLabel}" />
+        </VerticalStackLayout>
+
+        <ContentView Grid.RowSpan="2" IsVisible="{Binding HasActiveSite}">
+            <Grid RowDefinitions="Auto,*">
+
+                <!-- 分段控制：基本 / Params 表單 / 原始 TOML -->
+                <HorizontalStackLayout Grid.Row="0" Padding="16,12" Spacing="8">
+                    <Button Text="基本" Command="{Binding SelectSegmentCommand}" CommandParameter="basic"
+                            BackgroundColor="{Binding IsBasicSegmentSelected, Converter={StaticResource ActiveDotConverter}}"
+                            TextColor="White" CornerRadius="10" HeightRequest="38" Padding="14,0" FontSize="13" />
+                    <Button Text="Params 表單" Command="{Binding SelectSegmentCommand}" CommandParameter="params"
+                            BackgroundColor="{Binding IsParamsSegmentSelected, Converter={StaticResource ActiveDotConverter}}"
+                            TextColor="White" CornerRadius="10" HeightRequest="38" Padding="14,0" FontSize="13" />
+                    <Button Text="原始 TOML" Command="{Binding SelectSegmentCommand}" CommandParameter="raw"
+                            BackgroundColor="{Binding IsRawSegmentSelected, Converter={StaticResource ActiveDotConverter}}"
+                            TextColor="White" CornerRadius="10" HeightRequest="38" Padding="14,0" FontSize="13" />
+                </HorizontalStackLayout>
+
+                <RefreshView Grid.Row="1" IsRefreshing="{Binding IsBusy}" Command="{Binding AppearingCommand}">
+                    <ScrollView>
+                        <VerticalStackLayout Padding="16,0,16,32" Spacing="10">
+
+                            <Label Text="{Binding StatusMessage}" Style="{StaticResource SubtitleLabel}"
+                                   IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Danger}"
+                                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                            <!-- 基本欄位 -->
+                            <VerticalStackLayout IsVisible="{Binding IsBasicSegmentSelected}" Spacing="4">
+                                <Label Text="baseURL" Style="{StaticResource SectionHeaderLabel}" />
+                                <Entry Text="{Binding BaseUrl}" Keyboard="Url" Placeholder="https://example.github.io/" />
+
+                                <Label Text="title" Style="{StaticResource SectionHeaderLabel}" />
+                                <Entry Text="{Binding SiteTitle}" Placeholder="網站標題" />
+
+                                <Label Text="languageCode" Style="{StaticResource SectionHeaderLabel}" />
+                                <Entry Text="{Binding LanguageCode}" Placeholder="zh-tw" />
+
+                                <Label Text="theme" Style="{StaticResource SectionHeaderLabel}" />
+                                <Entry Text="{Binding ThemeName}" Placeholder="hugo-theme-stack" />
+
+                                <Button Text="儲存基本設定" Style="{StaticResource PrimaryButton}" Margin="0,16,0,0"
+                                        Command="{Binding SaveBasicCommand}" />
+                            </VerticalStackLayout>
+
+                            <!-- Params 表單：用 BindableLayout 呈現，避免 CollectionView 在 ScrollView 內的高度問題 -->
+                            <VerticalStackLayout IsVisible="{Binding IsParamsSegmentSelected}" Spacing="0"
+                                                 BindableLayout.ItemsSource="{Binding ParamFields}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:ParamFieldItem">
+                                        <Frame Style="{StaticResource CardFrame}" Margin="0,6" Padding="12">
+                                            <VerticalStackLayout Spacing="6">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                        <Label Text="{Binding DisplayName}" FontFamily="OpenSansSemibold" FontSize="14" />
+                                                        <Label Text="{Binding Description}" Style="{StaticResource SubtitleLabel}" FontSize="11" />
+                                                    </VerticalStackLayout>
+                                                    <Switch Grid.Column="1" IsToggled="{Binding IsConfigured}" VerticalOptions="Center" />
+                                                </Grid>
+
+                                                <Entry Text="{Binding StringValue}" IsVisible="{Binding IsText}"
+                                                       IsEnabled="{Binding IsConfigured}" Placeholder="（留白代表不設定）" />
+                                                <Switch IsToggled="{Binding BoolValue}" IsVisible="{Binding IsBool}"
+                                                        IsEnabled="{Binding IsConfigured}" HorizontalOptions="Start" />
+                                            </VerticalStackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <Button Text="儲存 Params 表單" Style="{StaticResource PrimaryButton}"
+                                    IsVisible="{Binding IsParamsSegmentSelected}"
+                                    Command="{Binding SaveParamsCommand}" />
+
+                            <!-- 原始 TOML -->
+                            <VerticalStackLayout IsVisible="{Binding IsRawSegmentSelected}" Spacing="4">
+                                <Label Text="hugo.toml（原始內容，直接編輯）" Style="{StaticResource SectionHeaderLabel}" />
+                                <Editor Text="{Binding RawToml}" AutoSize="TextChanges" MinimumHeightRequest="400"
+                                        FontFamily="Courier" />
+                                <Button Text="儲存原始 TOML" Style="{StaticResource PrimaryButton}" Margin="0,16,0,0"
+                                        Command="{Binding SaveRawCommand}" />
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </RefreshView>
+            </Grid>
+        </ContentView>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HugoerMobile.ViewModels"
+             xmlns:models="clr-namespace:HugoerMobile.Models"
+             x:Class="HugoerMobile.Views.ThemesPage"
+             x:Name="Root"
+             x:DataType="vm:ThemesViewModel"
+             Title="主題">
+
+    <Grid>
+        <VerticalStackLayout IsVisible="{Binding HasActiveSite, Converter={StaticResource InverseBoolConverter}}"
+                             VerticalOptions="Center" Padding="32">
+            <Label Text="請先在「站台」分頁連結或選擇一個 Hugo 網站" HorizontalTextAlignment="Center" Style="{StaticResource SubtitleLabel}" />
+        </VerticalStackLayout>
+
+        <RefreshView IsVisible="{Binding HasActiveSite}" IsRefreshing="{Binding IsBusy}" Command="{Binding AppearingCommand}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16,16,16,32" Spacing="8">
+
+                    <Frame Style="{StaticResource CardFrame}" Margin="0">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="目前主題" Style="{StaticResource SectionHeaderLabel}" Margin="0" />
+                            <Label Text="{Binding CurrentTheme}" FontSize="18" FontFamily="OpenSansSemibold" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Danger}"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                    <Label Text="{Binding StatusMessage}" Style="{StaticResource SubtitleLabel}"
+                           IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <Label Text="精選主題目錄" Style="{StaticResource SectionHeaderLabel}" />
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Catalog}" Spacing="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:ThemeInfo">
+                                <Frame Style="{StaticResource CardFrame}" Margin="0,6">
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="{Binding Name}" FontFamily="OpenSansSemibold" FontSize="16" />
+                                        <Label Text="{Binding Description}" Style="{StaticResource SubtitleLabel}" />
+                                        <Label Text="{Binding ThemeConfigValue}" FontSize="12" TextColor="{StaticResource Primary}" />
+                                        <HorizontalStackLayout Spacing="8" Margin="0,6,0,0">
+                                            <Button Text="套用" Style="{StaticResource SecondaryButton}"
+                                                    Margin="0" HeightRequest="40"
+                                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.ApplyThemeCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            <Button Text="查看原始碼" Style="{StaticResource SecondaryButton}"
+                                                    Margin="0" HeightRequest="40"
+                                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.OpenThemeRepoCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:HugoerMobile.Views"
+       x:Class="HugoerMobile.AppShell"
+       Shell.FlyoutBehavior="Disabled"
+       Title="Hugoer">
+
+    <!--
+        行動友善導覽：底部 5 個常駐分頁，對應桌面版「環境／設定檔／主題／內容／GitHub」。
+        「站台」取代「環境」：手機上先選擇/連結要管理的 Hugo 網站（GitHub repo），
+        其餘分頁一律針對目前作用中的網站（ActiveSiteState）運作。
+    -->
+    <TabBar>
+        <ShellContent Title="站台"
+                      Icon="tab_sites.png"
+                      ContentTemplate="{DataTemplate views:SitesPage}"
+                      Route="sites" />
+
+        <ShellContent Title="設定檔"
+                      Icon="tab_config.png"
+                      ContentTemplate="{DataTemplate views:ConfigPage}"
+                      Route="config" />
+
+        <ShellContent Title="主題"
+                      Icon="tab_themes.png"
+                      ContentTemplate="{DataTemplate views:ThemesPage}"
+                      Route="themes" />
+
+        <ShellContent Title="內容"
+                      Icon="tab_content.png"
+                      ContentTemplate="{DataTemplate views:ContentListPage}"
+                      Route="content" />
+
+        <ShellContent Title="GitHub"
+                      Icon="tab_github.png"
+                      ContentTemplate="{DataTemplate views:ActionsPage}"
+                      Route="actions" />
+    </TabBar>
+
+</Shell>

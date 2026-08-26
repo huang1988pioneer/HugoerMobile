@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:HugoerMobile.Converters"
+             x:Class="HugoerMobile.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:BoolToColorConverter x:Key="ActiveDotConverter" TrueColor="{StaticResource Primary}" FalseColor="{StaticResource Gray300}" />
+            <conv:BoolToColorConverter x:Key="InactiveDotConverter" TrueColor="{StaticResource Gray300}" FalseColor="{StaticResource Primary}" />
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <conv:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <conv:HtmlToWebViewSourceConverter x:Key="HtmlToWebViewSourceConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

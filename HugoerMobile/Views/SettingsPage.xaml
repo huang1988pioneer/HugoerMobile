@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HugoerMobile.ViewModels"
+             x:Class="HugoerMobile.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="設定">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+
+            <Label Text="已連結的網站" Style="{StaticResource SectionHeaderLabel}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding ConnectedSites}" Spacing="4">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Frame Style="{StaticResource CardFrame}" Margin="0,4">
+                            <Label Text="{Binding .}" />
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Button Text="清除所有已連結網站與權杖" Style="{StaticResource SecondaryButton}" Margin="0,16,0,0"
+                    TextColor="{StaticResource Danger}" BorderColor="{StaticResource Danger}"
+                    Command="{Binding ClearAllTokensCommand}" />
+
+            <Label Text="{Binding StatusMessage}" Style="{StaticResource SubtitleLabel}" Margin="0,16,0,0"
+                   IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}" Margin="0,24" />
+
+            <Label Text="關於 Hugoer Mobile" Style="{StaticResource SectionHeaderLabel}" />
+            <Label Text="{Binding AppVersion, StringFormat='版本 {0}'}" Style="{StaticResource SubtitleLabel}" />
+            <Label Style="{StaticResource SubtitleLabel}"
+                   Text="Hugoer 桌面工作台的行動副手：透過 GitHub API 管理 Hugo 網站的內容、設定與部署。" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

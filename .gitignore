@@ -1,0 +1,21 @@
+## .NET / MAUI
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+*.userosscache
+*.sln.docstates
+
+## macOS
+.DS_Store
+
+## Android
+*.apk
+*.aab
+local.properties
+
+## iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
