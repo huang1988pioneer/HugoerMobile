@@ -1,25 +1,26 @@
 # Hugoer Mobile design system
 
-Hugoer Mobile is a native companion for the desktop Hugo workbench. Its first viewport is a release dispatch board: a selected site, a four-station path (draft → preview → queued → live), and one deliberate next action. The mobile app is intentionally not a scaled desktop sidebar.
+Hugoer Mobile is a native companion for the desktop Hugo workbench. Its primary surface follows the original five-tab workflow: 站台、設定檔、主題、內容、GitHub. Each tab keeps one focused task visible without turning the phone into a scaled desktop sidebar.
 
 ## Visual language
 
-- **Surface:** graphite/slate backgrounds in dark mode and warm neutral paper in light mode. Cards use restrained tonal elevation and large, calm corner radii.
-- **Signal:** Hugoer cyan identifies the selected site, healthy Pages state, links, and the active workflow station.
-- **Decision:** warm amber is reserved for publish/deploy actions and the selected Publish destination. It is never used as decoration.
-- **Type:** platform system typography carries Dynamic Type / font scaling. Headings are compact and editorial; supporting copy is short enough to scan while holding a phone.
-- **Shape:** rounded cards and chips group decisions; the dispatch rail uses four repeated station marks so progress is legible without color alone.
+- **Surface:** a quiet light grouped background with white title bars and soft gray content cards; dark mode maps the same roles to graphite surfaces.
+- **Signal:** Hugoer blue identifies selected tabs, connected sites, links, healthy Pages state, and primary actions.
+- **Decision:** destructive actions remain red and deployment actions use the platform's prominent button treatment.
+- **Type:** platform system typography carries Dynamic Type / font scaling. Large screen titles make each tab immediately identifiable.
+- **Shape:** generous rounded cards and pill-shaped segmented controls group decisions while preserving the original mobile rhythm.
 
 ## Interaction contract
 
-1. Overview answers “which site, where is the release, what is safe next?”
-2. Articles provides search, status filters, a focused article card, and an editor sheet with Markdown/Preview modes.
-3. Deploy requires an explicit confirmation dialog before it records a deployment intent. The demo adapter makes the remote-write seam visible.
-4. More hands off desktop-only work (local Hugo installation, preview servers, themes, menus, and bulk migration) instead of pretending a phone can do it safely.
+1. 站台 answers which repository is connected and which site is active.
+2. 設定檔 exposes the basic Hugo fields, Params 表單, and raw TOML tabs.
+3. 主題 keeps the active theme and one-tap theme choices visible.
+4. 內容 keeps `content/post` browsing, search, refresh, add, delete, and Markdown/Preview editing together.
+5. GitHub makes Pages health, repository permission, deployment, and Actions history observable.
 
 ## Platform translation
 
-Android uses edge-to-edge Compose Material 3, a bottom navigation bar on compact windows, a navigation rail on expanded windows, a single Articles FAB, modal sheets, and snackbars.
+Android uses edge-to-edge Compose Material 3, a five-destination bottom navigation bar on compact windows, a navigation rail on expanded windows, a Sites FAB, modal sheets, and snackbars.
 
 iOS uses SwiftUI `TabView`, `NavigationStack`, sheets, confirmation dialogs, SF Symbols, semantic `Color`, safe-area behavior, and Dynamic Type. iPad uses the same content model while allowing the system navigation container to widen naturally.
 

@@ -120,22 +120,22 @@ final class DemoRepository: HugoerRepository {
 private extension HugoerSnapshot {
     static let seed = HugoerSnapshot(
         site: Site(
-            name: "Hugoer Journal",
-            repository: "huang1988pioneer/hugoer-journal",
+            name: "fenghuanghsin/fenghuanghsin.github.io",
+            repository: "fenghuanghsin/fenghuanghsin.github.io",
             branch: "main",
-            pagesURL: "huang1988pioneer.github.io/hugoer-journal",
-            lastCommit: "a91c2e7",
-            lastSynced: "8 分鐘前"
+            pagesURL: "https://fenghuanghsin.github.io/",
+            lastCommit: "main",
+            lastSynced: "剛剛"
         ),
         articles: [
             Article(
                 id: "welcome",
-                title: "把 Hugo 站帶在身上",
-                path: "content/post/mobile-workflow.md",
+                title: "無標題",
+                path: "content/post/無標題.md",
                 updated: "今天 09:42",
                 status: .draft,
-                excerpt: "一份給遠端工作日的內容工作流筆記。",
-                body: "---\ntitle: \"把 Hugo 站帶在身上\"\ndraft: true\n---\n\n手機適合做小而安全的發布決策。先看站點狀態，再決定要不要把這次變更送上線。"
+                excerpt: "星空下微風輕拂黃光閃耀的世界三。",
+                body: "---\ntitle: \"無標題\"\ndraft: true\n---\n\n星空下微風輕拂黃光閃耀的世界三。"
             ),
             Article(
                 id: "shortcodes",

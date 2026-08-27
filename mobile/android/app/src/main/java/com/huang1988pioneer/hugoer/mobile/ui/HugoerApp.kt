@@ -1,18 +1,17 @@
 package com.huang1988pioneer.hugoer.mobile.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Article
-import androidx.compose.material.icons.rounded.CloudUpload
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.MoreHoriz
+import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,10 +40,11 @@ enum class Destination(
     val label: String,
     val icon: ImageVector,
 ) {
-    Overview("總覽", Icons.Rounded.Home),
-    Articles("文章", Icons.AutoMirrored.Rounded.Article),
-    Deploy("發布", Icons.Rounded.CloudUpload),
-    More("更多", Icons.Rounded.MoreHoriz),
+    Sites("站台", Icons.Filled.Cloud),
+    Config("設定檔", Icons.Filled.Tune),
+    Themes("主題", Icons.Filled.Palette),
+    Content("內容", Icons.Filled.Article),
+    GitHub("GitHub", Icons.Filled.Code),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,16 +57,24 @@ fun HugoerApp() {
     val scope = rememberCoroutineScope()
     var destinationIndex by rememberSaveable { mutableStateOf(0) }
     var editorArticleId by rememberSaveable { mutableStateOf<String?>(null) }
-    var showPublishConfirmation by rememberSaveable { mutableStateOf(false) }
+    var showSettings by rememberSaveable { mutableStateOf(false) }
     val destination = Destination.entries[destinationIndex.coerceIn(0, Destination.entries.lastIndex)]
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        // Window width is the adaptive boundary: phones keep a bottom bar while
-        // tablets/foldables gain the Material navigation rail.
         val expanded = maxWidth >= 600.dp
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            floatingActionButton = {
+                if (destination == Destination.Sites) {
+                    ReferenceFloatingActionButton(
+                        contentDescription = "新增網站",
+                        onClick = {
+                            scope.launch { snackbarHostState.showSnackbar("新增網站功能即將推出") }
+                        },
+                    )
+                }
+            },
             bottomBar = {
                 if (!expanded) {
                     AppNavigationBar(
@@ -88,36 +96,37 @@ fun HugoerApp() {
                     )
                 }
                 Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    color = MaterialTheme.colorScheme.background,
-                ) {
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        color = MaterialTheme.colorScheme.background,
+                    ) {
                     when (destination) {
-                        Destination.Overview -> OverviewScreen(
+                        Destination.Sites -> ReferenceSitesScreen(
                             state = state,
-                            onSelectArticles = { destinationIndex = Destination.Articles.ordinal },
-                            onSelectDeploy = { destinationIndex = Destination.Deploy.ordinal },
-                            onOpenArticle = { editorArticleId = it.id },
-                            onSync = viewModel::refresh,
+                            onSettings = { showSettings = true },
                         )
-
-                        Destination.Articles -> ArticlesScreen(
+                        Destination.Config -> ReferenceConfigScreen(
+                            state = state,
+                            onSave = { message -> scope.launch { snackbarHostState.showSnackbar(message) } },
+                            onSettings = { showSettings = true },
+                        )
+                        Destination.Themes -> ReferenceThemesScreen(
+                            onApply = { theme -> scope.launch { snackbarHostState.showSnackbar("已套用 $theme") } },
+                            onSettings = { showSettings = true },
+                        )
+                        Destination.Content -> ReferenceContentScreen(
                             state = state,
                             onOpenArticle = { editorArticleId = it.id },
                             onCreateArticle = viewModel::createArticle,
+                            onSync = viewModel::refresh,
+                            onSettings = { showSettings = true },
                         )
-
-                        Destination.Deploy -> DeployScreen(
+                        Destination.GitHub -> ReferenceGitHubScreen(
                             state = state,
-                            onRequestPublish = { showPublishConfirmation = true },
-                            onOpenArticle = { editorArticleId = it.id },
-                        )
-
-                        Destination.More -> MoreScreen(
-                            onAction = { message ->
-                                scope.launch { snackbarHostState.showSnackbar(message) }
-                            },
+                            onDeploy = { viewModel.triggerDeployment() },
+                            onSync = viewModel::refresh,
+                            onSettings = { showSettings = true },
                         )
                     }
                 }
@@ -147,13 +156,13 @@ fun HugoerApp() {
         )
     }
 
-    if (showPublishConfirmation) {
-        PublishConfirmationDialog(
-            isBusy = state.isDeploying,
-            onDismiss = { if (!state.isDeploying) showPublishConfirmation = false },
-            onConfirm = {
-                showPublishConfirmation = false
-                viewModel.triggerDeployment()
+    if (showSettings) {
+        ReferenceSettingsDialog(
+            site = state.site,
+            onDismiss = { showSettings = false },
+            onAction = { message ->
+                showSettings = false
+                scope.launch { snackbarHostState.showSnackbar(message) }
             },
         )
     }

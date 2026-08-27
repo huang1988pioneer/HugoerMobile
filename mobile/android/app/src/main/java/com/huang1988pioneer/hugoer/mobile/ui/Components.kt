@@ -65,8 +65,8 @@ fun AppNavigationBar(
     onSelect: (Destination) -> Unit,
 ) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        tonalElevation = 0.dp,
     ) {
         Destination.entries.forEach { item ->
             NavigationBarItem(
@@ -74,6 +74,13 @@ fun AppNavigationBar(
                 onClick = { onSelect(item) },
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                ),
             )
         }
     }

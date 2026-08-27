@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum HugoerPalette {
-    static let cyan = Color(red: 0.28, green: 0.78, blue: 0.86)
-    static let cyanSoft = Color(red: 0.71, green: 0.92, blue: 0.95)
+    static let cyan = Color(red: 0.22, green: 0.48, blue: 1.0)
+    static let cyanSoft = Color(red: 0.75, green: 0.82, blue: 1.0)
     static let amber = Color(red: 0.98, green: 0.68, blue: 0.30)
     static let graphite = Color(uiColor: .systemBackground)
     static let surface = Color(uiColor: .secondarySystemBackground)

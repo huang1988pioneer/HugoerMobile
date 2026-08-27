@@ -61,7 +61,7 @@ in Markdown content.
 Pull requests touching either mobile target run platform-native build checks.
 Tagging `mobile-v*` runs `.github/workflows/android-mobile-release.yml`; a
 manual dispatch can package both platforms and can publish when `publish` is
-enabled with an explicit `release_tag` such as `mobile-v2.0.1`. The workflow
+enabled with an explicit `release_tag` such as `mobile-v2.0.2`. The workflow
 executes Android unit tests, archives the iOS target, and publishes clearly
 labelled APK/IPA artifacts. The platform packaging jobs only have read access;
 the release job receives the artifacts and is the only job granted

@@ -11,13 +11,13 @@ import androidx.compose.ui.unit.dp
 
 private val Graphite = Color(0xFF101418)
 private val GraphiteElevated = Color(0xFF1A2229)
-private val Paper = Color(0xFFF7FAFB)
-private val Ink = Color(0xFF172027)
-private val HugoCyan = Color(0xFF8DE5F5)
-private val HugoCyanDark = Color(0xFF006878)
+private val Paper = Color(0xFFF8F7FA)
+private val Ink = Color(0xFF101014)
+private val HugoCyan = Color(0xFF9CB8FF)
+private val HugoCyanDark = Color(0xFF397BFF)
 private val Amber = Color(0xFFFFC36B)
 private val AmberDark = Color(0xFF825500)
-private val MutedCyan = Color(0xFFB6EAF1)
+private val MutedCyan = Color(0xFFB6C8FF)
 
 private val DarkColors = darkColorScheme(
     primary = HugoCyan,
@@ -43,21 +43,22 @@ private val DarkColors = darkColorScheme(
 private val LightColors = lightColorScheme(
     primary = HugoCyanDark,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFB6F2FB),
-    onPrimaryContainer = Color(0xFF001F24),
+    primaryContainer = Color(0xFFD9E3FF),
+    onPrimaryContainer = Color(0xFF163574),
     secondary = AmberDark,
     onSecondary = Color.White,
     secondaryContainer = Color(0xFFFFDDA8),
     onSecondaryContainer = Color(0xFF2A1800),
-    tertiary = Color(0xFF3D656B),
+    tertiary = Color(0xFF485D92),
     background = Paper,
     onBackground = Ink,
     surface = Paper,
-    surfaceContainer = Color(0xFFEFF4F5),
-    surfaceVariant = Color(0xFFDCE8EA),
+    surfaceContainer = Color(0xFFE9E8ED),
+    surfaceVariant = Color(0xFFE4E3E8),
     onSurface = Ink,
-    onSurfaceVariant = Color(0xFF3F4B4E),
-    outline = Color(0xFF6E7A7E),
+    onSurfaceVariant = Color(0xFF47474F),
+    outline = Color(0xFF898990),
+    outlineVariant = Color(0xFFC8C7CD),
 )
 
 @Composable

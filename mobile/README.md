@@ -31,7 +31,7 @@ the iOS IPA produced by the GitHub Actions release workflow. Without Apple
 signing secrets, the IPA is explicitly labelled unsigned and requires a
 downstream signing step before device installation. For a manual release,
 enable `publish` and provide the matching `release_tag` input (for example,
-`mobile-v2.0.1`).
+`mobile-v2.0.2`).
 
 ## iOS
 
@@ -45,6 +45,6 @@ Type, and both orientations.
 The product and direction assumptions are recorded in [`../PRODUCT.md`](../PRODUCT.md)
 and [`../docs/mobile-design-direction.md`](../docs/mobile-design-direction.md);
 implementation boundaries are in [`../docs/mobile-architecture.md`](../docs/mobile-architecture.md).
-The visual idea is a release dispatch board:
-draft → preview → queue → live. Android and iOS translate that idea into their
-own platform controls instead of sharing a web shell.
+The visual contract follows the original five-tab mobile workflow: 站台、設定檔、
+主題、內容、GitHub. Android and iOS translate the same information architecture
+into native platform controls instead of sharing a web shell.

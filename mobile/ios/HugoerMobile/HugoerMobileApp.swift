@@ -11,28 +11,32 @@ struct HugoerMobileApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selection) {
-                OverviewView(
-                    onSelectArticles: { selection = 1 },
-                    onSelectDeploy: { selection = 2 },
-                    onOpenArticle: { editorArticle = $0 }
-                )
-                .tabItem { Label("總覽", systemImage: "house") }
+                ReferenceSitesView()
+                .tabItem { Label("站台", systemImage: "cloud.fill") }
                 .tag(0)
 
-                ArticlesView(
-                    onOpenArticle: { editorArticle = $0 },
-                    onCreateArticle: { editorArticle = store.createArticle() }
-                )
-                .tabItem { Label("文章", systemImage: "doc.text") }
+                ReferenceConfigView(onMessage: { toastMessage = $0 })
+                .tabItem { Label("設定檔", systemImage: "slider.horizontal.3") }
                 .tag(1)
 
-                DeployView(onOpenArticle: { editorArticle = $0 })
-                    .tabItem { Label("發布", systemImage: "icloud.and.arrow.up") }
+                ReferenceThemesView(onMessage: { toastMessage = $0 })
+                    .tabItem { Label("主題", systemImage: "paintpalette.fill") }
                     .tag(2)
 
-                MoreView(onAction: { toastMessage = $0 })
-                    .tabItem { Label("更多", systemImage: "ellipsis") }
+                ReferenceContentView(
+                    onOpenArticle: { editorArticle = $0 },
+                    onCreateArticle: { editorArticle = store.createArticle() },
+                    onRefresh: { Task { await store.refresh() } }
+                )
+                    .tabItem { Label("內容", systemImage: "doc.text.fill") }
                     .tag(3)
+
+                ReferenceGitHubView(
+                    onDeploy: { Task { await store.triggerDeployment() } },
+                    onRefresh: { Task { await store.refresh() } }
+                )
+                    .tabItem { Label("GitHub", systemImage: "arrow.triangle.2.circlepath") }
+                    .tag(4)
             }
             .tint(HugoerPalette.cyan)
             .environmentObject(store)
