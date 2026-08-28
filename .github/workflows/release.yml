@@ -9,7 +9,7 @@ on:
       version:
         description: "Release version without the v prefix"
         required: false
-        default: "1.1.0"
+        default: "1.1.1"
         type: string
       release_tag:
         description: "Existing tag to build (for example v1.1.0); leave blank to use the selected ref"

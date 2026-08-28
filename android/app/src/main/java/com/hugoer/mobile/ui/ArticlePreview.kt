@@ -31,7 +31,12 @@ internal object ArticlePreviewParser {
     private val imageTagPattern = Regex("""(?i)<img\b[^>]*\bsrc\s*=\s*[\"']([^\"']+)[\"'][^>]*>""")
     private val videoTagPattern = Regex("""(?i)<(?:video|source)\b[^>]*\bsrc\s*=\s*[\"']([^\"']+)[\"'][^>]*>""")
     private val pdfTagPattern = Regex("""(?i)<(?:iframe|embed|object)\b[^>]*\b(?:src|data)\s*=\s*[\"']([^\"']+)[\"'][^>]*>""")
-    private val shortcodePattern = Regex("""(?i)^\{\{<\s*(figure|image|img|video|pdf)\b([^>]*)>\}\}$""")
+    // Hugo sites commonly add a small wrapper around the built-in media
+    // shortcodes (for example `embed-video` / `embed-pdf`). Keep the parser
+    // permissive about the name, then classify the source by the known name or
+    // its media extension. This lets custom wrappers render without executing
+    // arbitrary shortcode code.
+    private val shortcodePattern = Regex("""(?i)^\{\{[<%]\s*([a-z][a-z0-9_-]*)\b([^>]*)[>%]\}\}$""")
     private val attributePattern = Regex("""(?i)\b(?:src|url|data|file)\s*=\s*[\"']([^\"']+)[\"']""")
     private val quotedShortcodeArgumentPattern = Regex("""[\"']([^\"']+)[\"']""")
 
@@ -120,13 +125,16 @@ internal object ArticlePreviewParser {
                 val source = attributePattern.find(attributes)?.groupValues?.get(1)
                     ?: quotedShortcodeArgumentPattern.find(attributes)?.groupValues?.get(1)
                 if (source != null) {
-                    flushParagraph()
-                    when (shortcode.groupValues[1].lowercase(Locale.ROOT)) {
-                        "figure", "image", "img" -> blocks += ArticlePreviewBlock.Image("文章圖片", normalizeSource(source))
-                        "video" -> blocks += ArticlePreviewBlock.Video(normalizeSource(source))
-                        "pdf" -> blocks += ArticlePreviewBlock.Pdf(normalizeSource(source))
+                    val kind = shortcodeMediaKind(shortcode.groupValues[1], source)
+                    if (kind != null) {
+                        flushParagraph()
+                        when (kind) {
+                            PreviewMediaKind.IMAGE -> blocks += ArticlePreviewBlock.Image("文章圖片", normalizeSource(source))
+                            PreviewMediaKind.VIDEO -> blocks += ArticlePreviewBlock.Video(normalizeSource(source))
+                            PreviewMediaKind.PDF -> blocks += ArticlePreviewBlock.Pdf(normalizeSource(source))
+                        }
+                        continue
                     }
-                    continue
                 }
             }
 
@@ -207,6 +215,17 @@ internal object ArticlePreviewParser {
     }
 
     fun normalizeSource(source: String): String = source.trim().removeSurrounding("<", ">")
+
+    private fun shortcodeMediaKind(name: String, source: String): PreviewMediaKind? {
+        return when (name.lowercase(Locale.ROOT)) {
+            "figure", "image", "img", "embed-image", "embed_img" -> PreviewMediaKind.IMAGE
+            "video", "embed-video", "embed_video" -> PreviewMediaKind.VIDEO
+            "pdf", "embed-pdf", "embed_pdf" -> PreviewMediaKind.PDF
+            // A custom wrapper is still safe to recognise when its source has
+            // an unambiguous media extension (e.g. `media src="clip.mp4"`).
+            else -> mediaKind(source, name)
+        }
+    }
 
     fun cleanInlineMarkdown(text: String): String = text
         .replace(Regex("""!\[([^]]*)\]\([^)]*\)"""), "$1")

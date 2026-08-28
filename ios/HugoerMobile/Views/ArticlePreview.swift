@@ -93,18 +93,18 @@ enum ArticlePreviewParser {
                 continue
             }
             if let shortcode = shortcode(from: line), let source = shortcodeSource(shortcode.attributes) {
-                flushParagraph()
-                switch shortcode.name {
-                case "figure", "image", "img":
-                    blocks.append(.image(alt: "文章圖片", source: normalizeSource(source)))
-                case "video":
-                    blocks.append(.video(source: normalizeSource(source)))
-                case "pdf":
-                    blocks.append(.pdf(source: normalizeSource(source)))
-                default:
-                    break
+                if let kind = shortcodeMediaKind(name: shortcode.name, source: source) {
+                    flushParagraph()
+                    switch kind {
+                    case .image:
+                        blocks.append(.image(alt: "文章圖片", source: normalizeSource(source)))
+                    case .video:
+                        blocks.append(.video(source: normalizeSource(source)))
+                    case .pdf:
+                        blocks.append(.pdf(source: normalizeSource(source)))
+                    }
+                    continue
                 }
-                continue
             }
             if let link = markdownLink(from: line, image: false) {
                 let source = normalizeSource(link.source)
@@ -235,7 +235,9 @@ enum ArticlePreviewParser {
     }
 
     private static func shortcode(from line: String) -> (name: String, attributes: String)? {
-        guard line.hasPrefix("{{<"), line.hasSuffix(">}}") else { return nil }
+        let angleDelimited = line.hasPrefix("{{<") && line.hasSuffix(">}}")
+        let percentDelimited = line.hasPrefix("{{%") && line.hasSuffix("%}}")
+        guard angleDelimited || percentDelimited else { return nil }
         let start = line.index(line.startIndex, offsetBy: 3)
         let end = line.index(line.endIndex, offsetBy: -3)
         let inner = String(line[start..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -249,6 +251,21 @@ enum ArticlePreviewParser {
         }
         if let quoted = capture(#"["']([^"']+)["']"#, in: attributes) { return quoted }
         return nil
+    }
+
+    private static func shortcodeMediaKind(name: String, source: String) -> PreviewMediaKind? {
+        switch name.lowercased() {
+        case "figure", "image", "img", "embed-image", "embed_img":
+            return .image
+        case "video", "embed-video", "embed_video":
+            return .video
+        case "pdf", "embed-pdf", "embed_pdf":
+            return .pdf
+        default:
+            // Custom wrappers can still be rendered when the source extension
+            // unambiguously identifies the media type.
+            return mediaKind(source, label: name)
+        }
     }
 }
 

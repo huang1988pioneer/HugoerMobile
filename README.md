@@ -116,7 +116,7 @@ xcodebuild build \
 
 ```powershell
 Set-Location D:\codex\HugoerMobile
-gh workflow run release.yml --repo huang1988pioneer/HugoerMobile --ref main -f version=1.1.0 -f publish=true
+gh workflow run release.yml --repo huang1988pioneer/HugoerMobile --ref main -f version=1.1.1 -f publish=true
 gh run watch --repo huang1988pioneer/HugoerMobile
 ```
 

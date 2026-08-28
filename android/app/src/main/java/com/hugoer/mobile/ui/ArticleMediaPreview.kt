@@ -52,6 +52,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -61,6 +62,7 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import android.util.Base64
+import kotlinx.coroutines.withTimeout
 
 /**
  * Renders the media blocks produced by [ArticlePreviewParser]. Media is loaded
@@ -227,7 +229,11 @@ private fun ImagePreview(source: String, originalSource: String) {
     var retryToken by remember(source) { mutableIntStateOf(0) }
     val state by produceState<PreviewLoadState<Bitmap>>(PreviewLoadState.Loading, source, retryToken) {
         value = try {
-            PreviewLoadState.Success(withContext(Dispatchers.IO) { loadBitmap(context, source) })
+            PreviewLoadState.Success(withTimeout(PREVIEW_LOAD_TIMEOUT_MS) {
+                withContext(Dispatchers.IO) { loadBitmap(context, source) }
+            })
+        } catch (error: kotlinx.coroutines.TimeoutCancellationException) {
+            PreviewLoadState.Failure("載入逾時，請確認網路後重試。")
         } catch (error: kotlinx.coroutines.CancellationException) {
             throw error
         } catch (error: Exception) {
@@ -311,7 +317,11 @@ private fun PdfPreview(source: String, originalSource: String) {
     var retryToken by remember(source) { mutableIntStateOf(0) }
     val state by produceState<PreviewLoadState<List<Bitmap>>>(PreviewLoadState.Loading, source, retryToken) {
         value = try {
-            PreviewLoadState.Success(withContext(Dispatchers.IO) { renderPdf(context, source) })
+            PreviewLoadState.Success(withTimeout(PREVIEW_LOAD_TIMEOUT_MS) {
+                withContext(Dispatchers.IO) { renderPdf(context, source) }
+            })
+        } catch (error: kotlinx.coroutines.TimeoutCancellationException) {
+            PreviewLoadState.Failure("載入逾時，請確認網路後重試。")
         } catch (error: kotlinx.coroutines.CancellationException) {
             throw error
         } catch (error: Exception) {
@@ -402,7 +412,37 @@ private sealed interface PreviewLoadState<out T> {
 }
 
 private fun loadBitmap(context: Context, source: String): Bitmap = withMediaInput(context, source) { input ->
-    BitmapFactory.decodeStream(input) ?: throw IOException("圖片格式不支援")
+    val bytes = readLimited(input, MAX_IMAGE_BYTES)
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+    if (bounds.outWidth <= 0 || bounds.outHeight <= 0) throw IOException("圖片格式不支援")
+
+    val options = BitmapFactory.Options().apply {
+        inSampleSize = calculateInSampleSize(bounds.outWidth, bounds.outHeight, MAX_IMAGE_DIMENSION)
+        inPreferredConfig = Bitmap.Config.ARGB_8888
+    }
+    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+        ?: throw IOException("圖片格式不支援")
+}
+
+private fun calculateInSampleSize(width: Int, height: Int, maxDimension: Int): Int {
+    var sample = 1
+    while (width / sample > maxDimension || height / sample > maxDimension) sample *= 2
+    return sample
+}
+
+private fun readLimited(input: InputStream, maxBytes: Int): ByteArray {
+    val output = ByteArrayOutputStream()
+    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+    var total = 0
+    while (true) {
+        val count = input.read(buffer)
+        if (count < 0) break
+        total += count
+        if (total > maxBytes) throw IOException("檔案過大，無法在手機上預覽")
+        output.write(buffer, 0, count)
+    }
+    return output.toByteArray()
 }
 
 private fun renderPdf(context: Context, source: String): List<Bitmap> {
@@ -451,6 +491,9 @@ private fun <T> withMediaInput(context: Context, source: String, block: (InputSt
         connection.connectTimeout = 10_000
         connection.readTimeout = 15_000
         connection.instanceFollowRedirects = true
+        connection.setRequestProperty("User-Agent", "HugoerMobile/1.1")
+        connection.setRequestProperty("Accept", "image/*,application/pdf,video/*,*/*;q=0.8")
+        connection.setRequestProperty("Accept-Encoding", "identity")
         return try {
             connection.connect()
             if (connection.responseCode !in 200..299) throw IOException("伺服器回應 ${connection.responseCode}")
@@ -516,3 +559,7 @@ private fun mediaErrorMessage(error: Throwable): String = when (error) {
     is java.net.UnknownHostException -> "找不到主機，離線時可稍後再試。"
     else -> error.message?.takeIf { it.isNotBlank() } ?: "檔案格式或網址無法讀取。"
 }
+
+private const val MAX_IMAGE_BYTES = 32 * 1024 * 1024
+private const val MAX_IMAGE_DIMENSION = 2048
+private const val PREVIEW_LOAD_TIMEOUT_MS = 30_000L
