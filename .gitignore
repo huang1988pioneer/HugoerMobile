@@ -1,10 +1,26 @@
+## .NET / MAUI
 bin/
 obj/
-dist/
-.vs/
-.idea/
 *.user
-*.suo
-*.DotSettings.user
+.vs/
+.vscode/
+*.userosscache
+*.sln.docstates
+
+## macOS
 .DS_Store
-Thumbs.db
+
+## Android
+*.apk
+*.aab
+*.keystore
+*.jks
+local.properties
+.gradle/
+android/**/build/
+
+## iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
+DerivedData/

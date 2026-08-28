@@ -1,91 +1,115 @@
-# Hugoer
+# HugoerMobile
 
-以 **Avalonia** 打造的 Hugo 桌面工作台：一鍵建立環境、圖形化設定、安裝主題（含 Stack）、Markdown 即時預覽、推送到 GitHub Pages。
+[Hugoer](https://github.com/huang1988pioneer/Hugoer) 桌面 Hugo 工作台的行動版副手，採用 **Android 原生 Kotlin + Jetpack Compose** 與 **iOS 原生 Swift + SwiftUI** 分別實作，透過 GitHub REST API 管理 Hugo 網站內容、設定與部署。
 
-## 功能
+## 為什麼手機版長得不一樣
+
+桌面版會呼叫本機 `hugo` / `git` / `gh` 執行檔並直接讀寫本機資料夾；這些在 iOS 上完全不可行，在 Android 上也不可靠。因此手機版定位為「Hugo 網站的隨身管理副手」：改以 **GitHub Contents / Actions / Pages REST API** 直接讀寫 repo，真正的 `hugo build` 交給 GitHub Actions 執行。
+
+完整設計理念、資訊架構圖、桌面／手機功能對照表，請見 [`DESIGN.md`](DESIGN.md)。
+
+## 功能（對應桌面版分頁）
 
 | 分頁 | 能力 |
-|------|------|
-| **環境** | 偵測／一鍵安裝 Hugo Extended、建立新站、開啟既有站、本機預覽、`hugo build` |
-| **設定檔** | 網站基本欄位、**圖形化 params 表單**（Hugo / Stack 常用參數）、原始 TOML |
-| **主題** | 一鍵安裝 **Stack** 及其他熱門主題、切換 theme、編輯主題設定 |
-| **內容** | 瀏覽 `content/`、新增文章、**Markdown 即時預覽**、瀏覽器 HTML 預覽 |
-| **GitHub** | `gh` 登入、建立 repo、推送、GitHub Actions、啟用／查詢 GitHub Pages |
+| --- | --- |
+| **站台** | 連結 GitHub repo（owner/repo + PAT）、管理多個已連結網站、切換目前作用中網站 |
+| **設定檔** | 基本欄位（baseURL / title / theme）、圖形化 **Params 表單**、原始 TOML 編輯，皆透過 Contents API 直接提交 |
+| **主題** | 顯示目前 `theme` 設定、精選主題目錄，一鍵切換 `theme` 值並推送 |
+| **內容** | 瀏覽 `content/`、新增／刪除文章、前置資料（front matter）表單 + Markdown 即時預覽 |
+| **GitHub** | 權限檢查、Actions 執行紀錄、手動觸發部署、GitHub Pages 狀態與啟用 |
 
-## 系統需求
+## 技術棧
 
-- Windows 10/11（亦可在 macOS / Linux 建置）
-- 開發：[.NET 10 SDK](https://dotnet.microsoft.com/download)
-- 建議： [Git](https://git-scm.com/)、[GitHub CLI (`gh`)](https://cli.github.com/)
+### Android 原生
 
-Hugo 可在應用程式內一鍵安裝。
+- Kotlin
+- Jetpack Compose + Material 3
+- Android ViewModel + StateFlow
+- OkHttp + Android `org.json`
+- `EncryptedSharedPreferences`（Android Keystore）儲存 GitHub PAT
+- Android WebView 顯示 Markdown 預覽
 
-## 開發執行
+### iOS 原生
 
-```powershell
-dotnet restore
-dotnet run
-```
+- Swift
+- SwiftUI + `TabView`
+- `ObservableObject` + `@Published` + Swift Concurrency (`async` / `await`)
+- `URLSession` + `Codable`
+- Keychain Services 儲存 GitHub PAT
+- `WKWebView` 顯示 Markdown 預覽
 
-## 打包：單一 EXE 與安裝程式
-
-一鍵發布腳本（建議）：
-
-```powershell
-.\scripts\publish.ps1
-# 或指定版本
-.\scripts\publish.ps1 -Version 1.1.0
-# 只要單一 exe、不要安裝程式
-.\scripts\publish.ps1 -SkipInstaller
-```
-
-產出位置：
-
-| 路徑 | 說明 |
-|------|------|
-| `dist\single\Hugoer.exe` | **單一可攜 EXE**（self-contained，免安裝 .NET） |
-| `dist\publish\win-x64\` | publish 輸出目錄 |
-| `dist\releases\velopack\` | Velopack **Setup.exe** 安裝程式（需 `vpk`） |
-| `dist\releases\inno\` | Inno Setup 安裝程式（若已安裝 Inno Setup 6） |
-
-手動 publish：
-
-```powershell
-dotnet publish -c Release -r win-x64 --self-contained true `
-  -p:PublishSingleFile=true `
-  -p:IncludeNativeLibrariesForSelfExtract=true `
-  -p:EnableCompressionInSingleFile=true `
-  -o .\dist\publish\win-x64
-```
-
-Velopack CLI（可選，產生 Setup.exe）：
-
-```powershell
-dotnet tool install -g vpk
-vpk pack --packId Hugoer --packVersion 1.1.0 --packDir .\dist\publish\win-x64 --mainExe Hugoer.exe --outputDir .\dist\releases\velopack
-```
-
-## 建議使用流程
-
-1. **環境** → 一鍵安裝 Hugo Extended  
-2. **環境** → 建立新網站（或開啟既有資料夾）  
-3. **主題** → 一鍵安裝 Stack  
-4. **設定檔** →「網站基本」改 baseURL / title；「Params 表單」調描述、色系、widgets 等  
-5. **內容** → 新增／編輯 Markdown，右側即時預覽  
-6. **GitHub** → `gh auth login` → 建立 Repo + 推送 + 啟用 Pages  
+兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser，並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。
 
 ## 專案結構
 
 ```
-Hugoer/
-  Controls/     Markdown 即時預覽控制項
-  Services/     Hugo、主題、內容、GitHub、Markdown、TOML params
-  ViewModels/   MVVM
-  Views/        Avalonia XAML
-  scripts/      publish.ps1
-  installer/    Inno Setup 腳本
+HugoerMobile/
+  android/                 Android 原生 Kotlin + Jetpack Compose
+    app/src/main/java/com/hugoer/mobile/
+  ios/                     iOS 原生 Swift + SwiftUI
+    HugoerMobile/
+  legacy-maui/             第一版 .NET MAUI 原型，僅供邏輯參考
+  DESIGN.md                完整產品與行動 UI 設計
 ```
+
+## 建置 Android
+
+```bash
+cd android
+JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home \
+ANDROID_HOME=/opt/homebrew/share/android-commandlinetools \
+ANDROID_SDK_ROOT=/opt/homebrew/share/android-commandlinetools \
+gradle :app:assembleDebug :app:assembleRelease
+```
+
+產物：
+
+```
+android/app/build/outputs/apk/debug/app-debug.apk
+android/app/build/outputs/apk/release/app-release.apk
+```
+
+目前 release APK 使用本機測試用自簽名 keystore，適合 sideload／測試，不是 Google Play production signing key。正式發布前請改用自己的 keystore，並透過環境變數提供簽署設定。
+
+## 建置 iOS
+
+產生 Xcode project 並建置 Simulator 版本：
+
+```bash
+cd ios
+xcodegen generate
+xcodebuild build \
+  -project HugoerMobile.xcodeproj \
+  -scheme HugoerMobile \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -sdk iphonesimulator \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+目前已驗證 iOS Simulator build 成功。可安裝到 App Store、TestFlight 或實機的正式 `.ipa` 必須使用 Apple Developer certificate、provisioning profile 與 team，不能使用無簽名 Simulator `.app` 取代。
+
+正式 IPA 建置需要設定：
+
+- Apple Developer Team ID
+- Distribution certificate
+- Provisioning profile
+- App Store Connect／TestFlight 發布權限
+
+## GitHub Personal Access Token 權限
+
+建議使用 Fine-grained PAT，限定目標 repository，並授予：
+
+- Contents：Read and write
+- Actions：Read and write
+- Pages：Read and write
+- Metadata：Read-only
+
+## 發布狀態
+
+- Android release APK：已建置並附加於 GitHub Release
+- iOS native source：已提交，Simulator build 已驗證
+- iOS production IPA：需 Apple Developer signing credentials，待設定後才能產生
 
 ## 授權
 
-本專案為本機開發工具；Hugo 與各主題請遵循其各自授權條款。
+本專案為 [Hugoer](https://github.com/huang1988pioneer/Hugoer) 桌面工作台的配套行動應用；Hugo 與各主題請遵循其各自授權條款。

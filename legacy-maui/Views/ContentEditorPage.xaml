@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HugoerMobile.ViewModels"
+             x:Class="HugoerMobile.Views.ContentEditorPage"
+             x:DataType="vm:ContentEditorViewModel"
+             Title="編輯文章">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="刪除" Command="{Binding DeleteCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- 前置資料（Front Matter）：常用欄位以表單呈現，其餘留在內文編輯 -->
+        <Expander Grid.Row="0">
+            <Expander.Header>
+                <Label Text="文章資訊" Style="{StaticResource SectionHeaderLabel}" Margin="16,10" />
+            </Expander.Header>
+            <VerticalStackLayout Padding="16,0,16,12" Spacing="4">
+                <Label Text="標題" Style="{StaticResource SubtitleLabel}" />
+                <Entry Text="{Binding Title}" />
+
+                <Label Text="日期" Style="{StaticResource SubtitleLabel}" />
+                <Entry Text="{Binding Date}" Placeholder="2026-01-01T09:00:00+08:00" />
+
+                <Label Text="標籤（逗號分隔）" Style="{StaticResource SubtitleLabel}" />
+                <Entry Text="{Binding Tags}" Placeholder="hugo, mobile" />
+
+                <Label Text="分類（逗號分隔）" Style="{StaticResource SubtitleLabel}" />
+                <Entry Text="{Binding Categories}" Placeholder="技術筆記" />
+
+                <HorizontalStackLayout Spacing="8" Margin="0,6,0,0">
+                    <Switch IsToggled="{Binding Draft}" />
+                    <Label Text="草稿（draft）" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Expander>
+
+        <!-- Edit / Preview 分段 -->
+        <HorizontalStackLayout Grid.Row="1" Padding="16,8" Spacing="8">
+            <Button Text="編輯" Command="{Binding TogglePreviewCommand}" HeightRequest="36" CornerRadius="10" Padding="14,0"
+                    BackgroundColor="{Binding IsPreviewSelected, Converter={StaticResource InactiveDotConverter}}"
+                    TextColor="White" FontSize="13" />
+            <Button Text="預覽" Command="{Binding TogglePreviewCommand}" HeightRequest="36" CornerRadius="10" Padding="14,0"
+                    BackgroundColor="{Binding IsPreviewSelected, Converter={StaticResource ActiveDotConverter}}"
+                    TextColor="White" FontSize="13" />
+        </HorizontalStackLayout>
+
+        <Editor Grid.Row="2" Text="{Binding Body}" IsVisible="{Binding IsPreviewSelected, Converter={StaticResource InverseBoolConverter}}"
+                Placeholder="開始寫作吧（支援 Markdown）…" Margin="16,0" AutoSize="TextChanges" />
+
+        <WebView Grid.Row="2" IsVisible="{Binding IsPreviewSelected}"
+                 Source="{Binding PreviewHtml, Converter={StaticResource HtmlToWebViewSourceConverter}}" />
+
+        <VerticalStackLayout Grid.Row="3" Padding="16,0,16,12" Spacing="4">
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Danger}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+            <Label Text="{Binding StatusMessage}" Style="{StaticResource SubtitleLabel}"
+                   IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+            <Button Text="儲存並推送到 GitHub" Style="{StaticResource PrimaryButton}" Margin="0"
+                    Command="{Binding SaveCommand}" />
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

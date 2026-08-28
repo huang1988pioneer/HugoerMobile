@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HugoerMobile.ViewModels"
+             xmlns:models="clr-namespace:HugoerMobile.Models"
+             x:Class="HugoerMobile.Views.ActionsPage"
+             x:Name="Root"
+             x:DataType="vm:ActionsViewModel"
+             Title="GitHub">
+
+    <Grid>
+        <VerticalStackLayout IsVisible="{Binding HasActiveSite, Converter={StaticResource InverseBoolConverter}}"
+                             VerticalOptions="Center" Padding="32">
+            <Label Text="請先在「站台」分頁連結或選擇一個 Hugo 網站" HorizontalTextAlignment="Center" Style="{StaticResource SubtitleLabel}" />
+        </VerticalStackLayout>
+
+        <RefreshView IsVisible="{Binding HasActiveSite}" IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16,16,16,32" Spacing="10">
+
+                    <!-- 狀態總覽卡片：優先呈現，符合行動情境「先看結果、再看細節」 -->
+                    <Frame Style="{StaticResource CardFrame}" Margin="0">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="GitHub Pages" Style="{StaticResource SectionHeaderLabel}" Margin="0" />
+                            <Label Text="{Binding PagesMessage}" FontSize="16" />
+                            <Label Text="{Binding PermissionSummary}" Style="{StaticResource SubtitleLabel}" />
+                            <HorizontalStackLayout Spacing="8" Margin="0,8,0,0">
+                                <Button Text="開啟網站" Style="{StaticResource SecondaryButton}" Margin="0" HeightRequest="40"
+                                        Command="{Binding OpenSiteCommand}" />
+                                <Button Text="啟用 Pages" Style="{StaticResource SecondaryButton}" Margin="0" HeightRequest="40"
+                                        IsVisible="{Binding PagesEnabled, Converter={StaticResource InverseBoolConverter}}"
+                                        Command="{Binding EnablePagesCommand}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Button Text="🚀 立即部署" Style="{StaticResource PrimaryButton}" Margin="0" Command="{Binding DeployNowCommand}" />
+
+                    <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Danger}"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                    <Label Text="{Binding StatusMessage}" Style="{StaticResource SubtitleLabel}"
+                           IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <Label Text="最近的建置紀錄" Style="{StaticResource SectionHeaderLabel}" />
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Runs}" Spacing="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:WorkflowRunInfo">
+                                <Frame Style="{StaticResource CardFrame}" Margin="0,6">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.OpenRunCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label Text="{Binding Name}" FontFamily="OpenSansSemibold" FontSize="14" />
+                                            <Label Text="{Binding HeadBranch}" Style="{StaticResource SubtitleLabel}" FontSize="12" />
+                                            <Label Text="{Binding CreatedAt, StringFormat='{0:yyyy-MM-dd HH:mm}'}"
+                                                   Style="{StaticResource SubtitleLabel}" FontSize="12" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding StatusLabel}" VerticalOptions="Center"
+                                               FontFamily="OpenSansSemibold" />
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>
