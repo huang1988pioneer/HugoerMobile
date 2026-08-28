@@ -111,9 +111,11 @@ jobs:
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
             printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/hugoer-release.keystore
             test -s android/app/hugoer-release.keystore
+            echo "ANDROID_RELEASE_SIGNING=production" >> "$GITHUB_ENV"
             echo "Android release signing is enabled."
           else
-            echo "::warning::ANDROID_KEYSTORE_BASE64 is not configured; the APK will be unsigned."
+            echo "ANDROID_RELEASE_SIGNING=preview" >> "$GITHUB_ENV"
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not configured; CI will publish a QA preview-signed APK and an unsigned APK."
           fi
 
       - name: Run Android tests
@@ -123,25 +125,43 @@ jobs:
             -p android \
             test
 
-      - name: Build release APK
+      - name: Build and stage Android APKs
         env:
           HUGOER_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           HUGOER_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           HUGOER_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           set -euo pipefail
+          release_dir="android/app/build/outputs/apk/release"
           gradle --no-daemon --stacktrace \
             -p android \
             -PversionName="${{ needs.prepare.outputs.version }}" \
             -PversionCode="${{ github.run_number }}" \
             assembleRelease
 
-      - name: Stage APK
-        run: |
-          set -euo pipefail
           mkdir -p dist
-          cp android/app/build/outputs/apk/release/app-release.apk \
-            "dist/HugoerMobile-${{ needs.prepare.outputs.version }}-android.apk"
+          if [ "$ANDROID_RELEASE_SIGNING" = "production" ]; then
+            production_apk="$release_dir/app-release.apk"
+            test -f "$production_apk"
+            cp "$production_apk" \
+              "dist/HugoerMobile-${{ needs.prepare.outputs.version }}-android-signed.apk"
+          else
+            unsigned_apk="$release_dir/app-release-unsigned.apk"
+            test -f "$unsigned_apk"
+            cp "$unsigned_apk" \
+              "dist/HugoerMobile-${{ needs.prepare.outputs.version }}-android-unsigned.apk"
+
+            gradle --no-daemon --stacktrace \
+              -p android \
+              -PversionName="${{ needs.prepare.outputs.version }}" \
+              -PversionCode="${{ github.run_number }}" \
+              -PpreviewSigning=true \
+              assembleRelease
+            preview_apk="$release_dir/app-release.apk"
+            test -f "$preview_apk"
+            cp "$preview_apk" \
+              "dist/HugoerMobile-${{ needs.prepare.outputs.version }}-android-preview-signed.apk"
+          fi
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -316,7 +336,7 @@ jobs:
           body: |
             Mobile packages for Hugoer Mobile ${{ needs.prepare.outputs.version }}.
 
-            - Android: APK
+            - Android: signed APK when Android signing secrets are configured; otherwise a QA preview-signed APK plus an unsigned APK for downstream signing
             - iOS: signed IPA when Apple signing secrets are configured; otherwise an unsigned IPA for downstream signing
           files: |
             dist/*.apk

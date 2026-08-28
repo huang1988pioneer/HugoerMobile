@@ -106,7 +106,7 @@ xcodebuild build \
 
 ## 發布狀態
 
-- Android release APK：已建置並附加於 GitHub Release
+- Android signed APK：需 Android signing secrets；未設定時 Release 會附上可安裝的 QA preview-signed APK 與明確標示的 unsigned APK
 - iOS native source：已提交，Simulator build 已驗證
 - iOS signed IPA：需 Apple Developer signing credentials；未設定時 Release 會附上 unsigned IPA
 

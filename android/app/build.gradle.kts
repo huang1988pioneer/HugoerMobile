@@ -10,6 +10,9 @@ val releaseVersionName = (project.findProperty("versionName") as? String)
 val releaseVersionCode = (project.findProperty("versionCode") as? String)
     ?.toIntOrNull()
     ?: 1
+val previewSigningEnabled = (project.findProperty("previewSigning") as? String)
+    ?.equals("true", ignoreCase = true)
+    ?: false
 
 android {
     namespace = "com.hugoer.mobile"
@@ -49,6 +52,10 @@ android {
             )
             if (file("hugoer-release.keystore").exists()) {
                 signingConfig = signingConfigs.getByName("release")
+            } else if (previewSigningEnabled) {
+                // A QA-only fallback used by CI when production signing material is absent.
+                // It produces an installable APK signed with Android's debug key.
+                signingConfig = signingConfigs.getByName("debug")
             }
         }
         debug {
