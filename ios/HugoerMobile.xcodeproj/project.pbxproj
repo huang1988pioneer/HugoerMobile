@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A7F1C9D42B6E4F8A91D3E205 /* ArticlePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */; };
 		17EA38D3BD24DA13AD592F95 /* ConnectSiteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570879D2E1EC1474BE19A5DE /* ConnectSiteViewModel.swift */; };
 		180C1F31289D6D46C8334DA0 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54001C5F43D50E711B06BEC6 /* KeychainTokenStore.swift */; };
 		1A69EECE2DF6688104232223 /* GitHubApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7717D3F35E36D916649C4024 /* GitHubApiService.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePreview.swift; sourceTree = "<group>"; };
 		019AC98A734FF6324CDF573D /* ThemesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesViewModel.swift; sourceTree = "<group>"; };
 		085C4F0AE5AE33FBB3E161FE /* GitHubRepositoryTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubRepositoryTarget.swift; sourceTree = "<group>"; };
 		10CF843C091579A84BB186A3 /* HugoerMobile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HugoerMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +102,7 @@
 		2B1DCA8F9517FBDEE0348D37 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */,
 				4DCEEDD5B3AEB5EE746FF425 /* ConfigView.swift */,
 				E1CCF27756B53A61F0F21F1D /* ConnectSiteView.swift */,
 				91C99294C02D1299B15CF21E /* ContentBrowserView.swift */,
@@ -246,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66D0F284F79955BF2F7D4FFA /* ActiveSiteState.swift in Sources */,
+				A7F1C9D42B6E4F8A91D3E205 /* ArticlePreview.swift in Sources */,
 				D0AFBA3DEA6B54FD9904DB25 /* AppState.swift in Sources */,
 				938F5193D780D637C04B5F76 /* ConfigLocator.swift in Sources */,
 				2D5E80153B666376FFA3BF32 /* ConfigView.swift in Sources */,

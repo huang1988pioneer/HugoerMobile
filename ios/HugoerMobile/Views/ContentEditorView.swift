@@ -9,7 +9,6 @@ private enum EditorMode: String, CaseIterable, Identifiable {
 struct ContentEditorView: View {
     @StateObject private var viewModel: ContentEditorViewModel
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
     @State private var mode: EditorMode = .edit
     @State private var showDeleteConfirm = false
     @State private var frontMatterExpanded = true
@@ -39,7 +38,15 @@ struct ContentEditorView: View {
             } else if mode == .edit {
                 editForm
             } else {
-                MarkdownWebView(htmlString: viewModel.renderPreviewHtml(isDarkMode: colorScheme == .dark))
+                ScrollView {
+                    ArticlePreview(
+                        title: viewModel.title,
+                        markdown: viewModel.body,
+                        baseURL: site.pagesUrl,
+                        documentPath: viewModel.path,
+                    )
+                    .padding()
+                }
             }
         }
         .navigationTitle(viewModel.path)

@@ -15,7 +15,7 @@
 | **站台** | 連結 GitHub repo（owner/repo + PAT）、管理多個已連結網站、切換目前作用中網站 |
 | **設定檔** | 基本欄位（baseURL / title / theme）、圖形化 **Params 表單**、原始 TOML 編輯，皆透過 Contents API 直接提交 |
 | **主題** | 顯示目前 `theme` 設定、精選主題目錄，一鍵切換 `theme` 值並推送 |
-| **內容** | 瀏覽 `content/`、新增／刪除文章、前置資料（front matter）表單 + Markdown 即時預覽 |
+| **內容** | 瀏覽 `content/`、新增／刪除文章、前置資料（front matter）表單 + 原生 Markdown／圖片／影片／PDF 即時預覽 |
 | **GitHub** | 權限檢查、Actions 執行紀錄、手動觸發部署、GitHub Pages 狀態與啟用 |
 
 ## 技術棧
@@ -27,7 +27,7 @@
 - Android ViewModel + StateFlow
 - OkHttp + Android `org.json`
 - `EncryptedSharedPreferences`（Android Keystore）儲存 GitHub PAT
-- Android WebView 顯示 Markdown 預覽
+- Android 原生 Compose 顯示 Markdown、圖片、影片與 PDF 預覽
 
 ### iOS 原生
 
@@ -36,9 +36,9 @@
 - `ObservableObject` + `@Published` + Swift Concurrency (`async` / `await`)
 - `URLSession` + `Codable`
 - Keychain Services 儲存 GitHub PAT
-- `WKWebView` 顯示 Markdown 預覽
+- SwiftUI 原生顯示 Markdown、圖片、影片與 PDF 預覽
 
-兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser，並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。
+兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser，並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。底部五個分頁的圖示與資訊架構以 v1.0.0 版面為基準；編輯器預覽額外支援常見 Hugo shortcode、相對媒體網址與不受信任 scheme 的安全拒絕。
 
 ## 專案結構
 
@@ -86,7 +86,7 @@ xcodebuild build \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-目前已驗證 iOS Simulator build 成功。可安裝到 App Store、TestFlight 或實機的正式 `.ipa` 必須使用 Apple Developer certificate、provisioning profile 與 team，不能使用無簽名 Simulator `.app` 取代。
+目前已驗證 iOS Simulator build 成功。GitHub Actions 在有 Apple signing secrets 時產生可發佈的簽名 IPA；沒有 secrets 時仍會封裝明確標示的 unsigned IPA，供下游以自己的憑證重新簽署，不能直接安裝到實機。
 
 正式 IPA 建置需要設定：
 
@@ -108,7 +108,19 @@ xcodebuild build \
 
 - Android release APK：已建置並附加於 GitHub Release
 - iOS native source：已提交，Simulator build 已驗證
-- iOS production IPA：需 Apple Developer signing credentials，待設定後才能產生
+- iOS signed IPA：需 Apple Developer signing credentials；未設定時 Release 會附上 unsigned IPA
+
+## 手動發布
+
+在 GitHub CLI 已登入且具備 repository `Contents: write` 權限的環境執行：
+
+```powershell
+Set-Location D:\codex\HugoerMobile
+gh workflow run release.yml --repo huang1988pioneer/HugoerMobile --ref main -f version=1.1.0 -f publish=true
+gh run watch --repo huang1988pioneer/HugoerMobile
+```
+
+若要從既有 tag 建置，另外傳入 `-f release_tag=v1.1.0`；此時 workflow 會以該 tag 的 commit checkout，不會誤用觸發分支。
 
 ## 授權
 

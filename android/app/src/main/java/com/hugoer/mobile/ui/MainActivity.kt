@@ -3,8 +3,6 @@ package com.hugoer.mobile.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,7 +21,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -94,14 +91,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.hugoer.mobile.AppTab
 import com.hugoer.mobile.AppViewModel
 import com.hugoer.mobile.AppUiState
@@ -449,7 +444,24 @@ private fun EditorScreen(editor: EditorState, state: AppUiState, vm: AppViewMode
     LaunchedEffect(editor.body, editor.isPreview) { vm.refreshPreview(dark) }
     Scaffold(topBar = { TopAppBar(title = { Text(if (editor.isNew) "新增文章" else "編輯文章") }, navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "返回") } }, actions = { IconButton(onClick = vm::togglePreview) { Icon(if (editor.isPreview) Icons.Default.Edit else Icons.Default.Visibility, "切換預覽") } }) }, bottomBar = { Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).navigationBarsPadding().imePadding().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) { Button(onClick = vm::saveEditor, modifier = Modifier.weight(1f)) { Icon(Icons.Default.Save, null); Spacer(Modifier.width(6.dp)); Text("儲存") }; if (!editor.isNew) OutlinedButton(onClick = vm::deleteEditor) { Icon(Icons.Default.Delete, null); Text("刪除") } } }) { padding ->
         if (editor.isPreview) {
-            AndroidView(factory = { context -> WebView(context).apply { webViewClient = WebViewClient(); settings.javaScriptEnabled = false } }, update = { web -> web.loadDataWithBaseURL(null, editor.previewHtml, "text/html", "UTF-8", null) }, modifier = Modifier.fillMaxSize().padding(padding))
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                ArticlePreview(
+                    title = editor.title,
+                    markdown = editor.body,
+                    baseUrl = state.baseUrl.ifBlank {
+                        state.sites.firstOrNull { it.id == state.activeSiteId }?.pagesUrl.orEmpty()
+                    },
+                    documentPath = editor.path,
+                )
+                Spacer(Modifier.height(72.dp))
+            }
         } else {
             Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).imePadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(editor.path, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

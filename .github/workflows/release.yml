@@ -8,9 +8,19 @@ on:
     inputs:
       version:
         description: "Release version without the v prefix"
-        required: true
-        default: "1.0.0"
+        required: false
+        default: "1.1.0"
         type: string
+      release_tag:
+        description: "Existing tag to build (for example v1.1.0); leave blank to use the selected ref"
+        required: false
+        default: ""
+        type: string
+      publish:
+        description: "Create or update the GitHub Release after building"
+        required: true
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -35,43 +45,44 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
-      ios_signing_configured: ${{ steps.signing.outputs.configured }}
+      checkout_ref: ${{ steps.version.outputs.checkout_ref }}
     steps:
       - name: Resolve version
         id: version
         env:
           INPUT_VERSION: ${{ inputs.version }}
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            version="$INPUT_VERSION"
-            tag="v$version"
+            requested_tag="${INPUT_RELEASE_TAG:-}"
+            if [ -n "$requested_tag" ]; then
+              tag="${requested_tag#refs/tags/}"
+              version="${tag#v}"
+              checkout_ref="refs/tags/$tag"
+            else
+              version="$INPUT_VERSION"
+              tag="v$version"
+              checkout_ref="$GITHUB_REF"
+            fi
           else
             tag="$GITHUB_REF_NAME"
             version="${tag#v}"
+            checkout_ref="$GITHUB_REF"
           fi
 
           if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "Version must use the form X.Y.Z, got: $version" >&2
             exit 1
           fi
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Release tag must use the form vX.Y.Z, got: $tag" >&2
+            exit 1
+          fi
 
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-
-      - name: Check iOS signing configuration
-        id: signing
-        env:
-          CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
-          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          if [ -n "$CERTIFICATE" ] && [ -n "$PROVISIONING_PROFILE" ] && [ -n "$TEAM_ID" ]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "iOS signing secrets are not configured; the IPA job will be skipped."
-          fi
+          echo "checkout_ref=$checkout_ref" >> "$GITHUB_OUTPUT"
 
   android:
     name: Build Android APK
@@ -80,6 +91,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -102,6 +115,13 @@ jobs:
           else
             echo "::warning::ANDROID_KEYSTORE_BASE64 is not configured; the APK will be unsigned."
           fi
+
+      - name: Run Android tests
+        run: |
+          set -euo pipefail
+          gradle --no-daemon --stacktrace \
+            -p android \
+            test
 
       - name: Build release APK
         env:
@@ -133,13 +153,14 @@ jobs:
   ios:
     name: Build iOS IPA
     needs: prepare
-    if: needs.prepare.outputs.ios_signing_configured == 'true'
     runs-on: macos-15
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.checkout_ref }}
 
-      - name: Import Apple signing assets when configured
+      - name: Configure Apple signing
         run: |
           set -euo pipefail
           if [ -n "$APPLE_CERTIFICATE_BASE64" ] && \
@@ -174,8 +195,8 @@ jobs:
             echo "IOS_PROFILE_UUID=$profile_uuid" >> "$GITHUB_ENV"
             echo "IOS_KEYCHAIN_PATH=$keychain_path" >> "$GITHUB_ENV"
           else
-            echo "Apple signing configuration was expected but is missing." >&2
-            exit 1
+            echo "SIGNING_ENABLED=NO" >> "$GITHUB_ENV"
+            echo "Apple signing secrets are not configured; packaging a clearly labelled unsigned IPA."
           fi
 
       - name: Archive iOS app
@@ -248,8 +269,13 @@ jobs:
               -exportOptionsPlist "$export_options"
             cp "$RUNNER_TEMP/exported/HugoerMobile.ipa" "$ipa_path"
           else
-            echo "A signed iOS archive is required to create an installable IPA." >&2
-            exit 1
+            app_path="$archive_path/Products/Applications/HugoerMobile.app"
+            test -d "$app_path"
+            package_root="$RUNNER_TEMP/unsigned-ipa"
+            rm -rf "$package_root"
+            mkdir -p "$package_root/Payload"
+            cp -R "$app_path" "$package_root/Payload/"
+            (cd "$package_root" && zip -qry "$GITHUB_WORKSPACE/$ipa_path" Payload)
           fi
 
       - name: Upload IPA artifact
@@ -262,7 +288,7 @@ jobs:
   release:
     name: Publish GitHub Release
     needs: [prepare, android, ios]
-    if: always() && needs.android.result == 'success'
+    if: always() && needs.android.result == 'success' && (github.event_name != 'workflow_dispatch' || inputs.publish == true)
     runs-on: ubuntu-latest
     steps:
       - name: Download mobile packages
@@ -285,12 +311,13 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           name: Hugoer Mobile ${{ needs.prepare.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           body: |
             Mobile packages for Hugoer Mobile ${{ needs.prepare.outputs.version }}.
 
             - Android: APK
-            - iOS: signed IPA when Apple signing secrets are configured; otherwise the iOS job is skipped
+            - iOS: signed IPA when Apple signing secrets are configured; otherwise an unsigned IPA for downstream signing
           files: |
             dist/*.apk
             dist/*.ipa

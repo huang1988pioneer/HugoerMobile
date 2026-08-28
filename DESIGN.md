@@ -18,8 +18,8 @@
 
 ## 2. 技術選型
 
-- **Android 原生 Kotlin + Jetpack Compose / Material 3**：使用 Android ViewModel + StateFlow、OkHttp、EncryptedSharedPreferences、Android WebView。
-- **iOS 原生 Swift + SwiftUI**：使用 ObservableObject + `@Published`、Swift Concurrency、URLSession、Keychain Services、WKWebView。
+- **Android 原生 Kotlin + Jetpack Compose / Material 3**：使用 Android ViewModel + StateFlow、OkHttp、EncryptedSharedPreferences，以及原生 Markdown／圖片／影片／PDF 預覽元件。
+- **iOS 原生 Swift + SwiftUI**：使用 ObservableObject + `@Published`、Swift Concurrency、URLSession、Keychain Services，以及 SwiftUI／AVKit／PDFKit 原生預覽元件。
 - 兩個平台分別使用原生 UI 與安全儲存，符合各自的生命週期、無障礙、導覽與發布工具鏈；GitHub API、TOML、Front Matter、Markdown 的行為維持一致。
 - **GitHub REST API v3**（`api.github.com`）＋ Personal Access Token（PAT）：取代 `gh` CLI。
 - 兩個原生版本都使用輕量、無第三方 parser 的 Markdown → HTML 預覽與 TOML reader/writer，避免跨平台 runtime 依賴。
@@ -77,7 +77,7 @@ flowchart TD
 | `ContentService`（本機檔案） | Android/iOS Content ViewModel + Contents API | 以 repo 內 `content/` 目錄取代本機資料夾 |
 | `FrontMatterService` | Android/iOS Front Matter service | 純字串處理，依照桌面版規則重寫 |
 | `TomlParamsService` | Android/iOS TOML services | 輕量 TOML reader/writer，保留 Hugo/Stack 常用欄位 |
-| `MarkdownPreviewService` | Android WebView / iOS WKWebView | 單篇文章 Markdown → HTML，非整站樣板渲染 |
+| `MarkdownPreviewService` | Android/iOS `ArticlePreview` | 單篇文章 Markdown、常見 Hugo shortcode 與圖片／影片／PDF 媒體原生預覽，非整站樣板渲染 |
 | `HugoConfigService` | Android/iOS Config ViewModel + ConfigLocator | 嘗試 `hugo.toml` / `config.toml` / `config/_default/hugo.toml` |
 | `ThemeService`（本機安裝） | Android/iOS ThemeCatalogService | 精選主題目錄 + 更新 `theme` 設定值；實際安裝導回桌面版 |
 | `GitHubService`（`gh`/`git` CLI） | Android/iOS GitHubApiService | Repo、Contents、Actions、Pages 全部改走 REST API |

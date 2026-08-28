@@ -17,6 +17,8 @@ obj/
 *.jks
 local.properties
 .gradle/
+.gradle-cache/
+.impeccable/
 android/**/build/
 
 ## iOS
