@@ -333,6 +333,7 @@ enum GitHubApiService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
+        request.setValue("HugoerMobile", forHTTPHeaderField: "User-Agent")
 
         if let jsonBody {
             request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody)
@@ -352,7 +353,20 @@ enum GitHubApiService {
 
     private static func ensureSuccess(_ response: HTTPURLResponse, data: Data) throws {
         if isSuccess(response) { return }
-        throw GitHubApiError(statusCode: response.statusCode, message: readError(data: data, response: response))
+        let message: String
+        switch response.statusCode {
+        case 401, 403:
+            message = "GitHub 權杖無效或權限不足。"
+        case 404:
+            message = "找不到這個資源，可能已被刪除或沒有存取權限。"
+        case 409:
+            message = "遠端檔案已變更，請重新載入後再儲存。"
+        case 429:
+            message = "GitHub API 請求過於頻繁，請稍後再試。"
+        default:
+            message = readError(data: data, response: response)
+        }
+        throw GitHubApiError(statusCode: response.statusCode, message: message)
     }
 
     private static func readError(data: Data, response: HTTPURLResponse) -> String {

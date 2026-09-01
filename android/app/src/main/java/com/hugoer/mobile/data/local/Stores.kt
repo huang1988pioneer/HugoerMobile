@@ -51,6 +51,14 @@ class SiteProfileStore(context: Context) {
         }
         preferences.edit().putString("sites", array.toString()).apply()
     }
+
+    fun loadActiveSiteId(): String? = preferences.getString("active_site_id", null)?.takeIf { it.isNotBlank() }
+
+    fun saveActiveSiteId(id: String?) {
+        preferences.edit().apply {
+            if (id.isNullOrBlank()) remove("active_site_id") else putString("active_site_id", id)
+        }.apply()
+    }
 }
 
 /** Secure Keystore-backed storage for GitHub PATs. Tokens never enter the plain profile JSON. */

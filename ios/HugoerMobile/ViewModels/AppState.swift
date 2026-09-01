@@ -31,11 +31,21 @@ final class AppState: ObservableObject {
     }
 
     func addSite(_ site: SiteProfile, token: String) {
-        sites.append(site)
-        KeychainTokenStore.saveToken(key: site.tokenKey, token: token)
+        var profile = site
+        if let index = sites.firstIndex(where: {
+            $0.owner.caseInsensitiveCompare(site.owner) == .orderedSame &&
+            $0.repository.caseInsensitiveCompare(site.repository) == .orderedSame
+        }) {
+            profile.id = sites[index].id
+            profile.addedAtUtc = sites[index].addedAtUtc
+            sites[index] = profile
+        } else {
+            sites.append(profile)
+        }
+        KeychainTokenStore.saveToken(key: profile.tokenKey, token: token)
         persist()
-        activeSiteId = site.id
-        activeSiteState.set(site)
+        activeSiteId = profile.id
+        activeSiteState.set(profile)
     }
 
     func removeSite(_ site: SiteProfile) {

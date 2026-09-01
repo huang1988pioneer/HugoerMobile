@@ -6,7 +6,7 @@ plugins {
 
 val releaseVersionName = (project.findProperty("versionName") as? String)
     ?.takeIf { it.isNotBlank() }
-    ?: "1.0.0"
+    ?: "1.2.0"
 val releaseVersionCode = (project.findProperty("versionCode") as? String)
     ?.toIntOrNull()
     ?: 1
@@ -74,6 +74,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     lint {

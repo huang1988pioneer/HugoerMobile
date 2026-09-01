@@ -227,6 +227,7 @@ class GitHubApiService(private val http: OkHttpClient) {
             .url("https://api.github.com/$endpoint")
             .header("Accept", "application/vnd.github+json")
             .header("X-GitHub-Api-Version", "2022-11-28")
+            .header("User-Agent", "HugoerMobile")
             .header("Authorization", "Bearer $token")
         if (body != null) builder.method(method, body.toString().toRequestBody(jsonMediaType))
         else builder.method(method, null)
@@ -241,7 +242,16 @@ class GitHubApiService(private val http: OkHttpClient) {
     }
 
     private fun ensureSuccess(response: Response) {
-        if (response.code !in 200..299) throw GitHubApiException(response.code, response.errorMessage())
+        if (response.code in 200..299) return
+        val message = when (response.code) {
+            401, 403 -> "GitHub 權杖無效或權限不足。"
+            404 -> "找不到這個資源，可能已被刪除或沒有存取權限。"
+            409 -> "遠端檔案已變更，請重新載入後再儲存。"
+            422 -> response.errorMessage().ifBlank { "GitHub 拒絕了這次變更，請重新載入後再試。" }
+            429 -> "GitHub API 請求過於頻繁，請稍後再試。"
+            else -> response.errorMessage()
+        }
+        throw GitHubApiException(response.code, message)
     }
 
     private fun encode(value: String): String = URLEncoder.encode(value, "UTF-8").replace("+", "%20")

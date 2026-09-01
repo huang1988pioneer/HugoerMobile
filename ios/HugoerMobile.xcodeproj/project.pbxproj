@@ -424,7 +424,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = HugoerMobile/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
-				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
+				INFOPLIST_KEY_CFBundleShortVersionString = 1.2.0;
 				INFOPLIST_KEY_CFBundleVersion = 1;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -432,6 +432,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.2.0;
+				CURRENT_PROJECT_VERSION = 1;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -444,7 +446,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = HugoerMobile/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
-				INFOPLIST_KEY_CFBundleShortVersionString = 1.0;
+				INFOPLIST_KEY_CFBundleShortVersionString = 1.2.0;
 				INFOPLIST_KEY_CFBundleVersion = 1;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -452,6 +454,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.2.0;
+				CURRENT_PROJECT_VERSION = 1;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

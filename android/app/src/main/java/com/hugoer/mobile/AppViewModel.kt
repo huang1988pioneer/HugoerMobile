@@ -14,20 +14,28 @@ import com.hugoer.mobile.data.model.ParamFieldItem
 import com.hugoer.mobile.data.model.SiteProfile
 import com.hugoer.mobile.data.model.ThemeInfo
 import com.hugoer.mobile.data.model.WorkflowRunInfo
+import com.hugoer.mobile.data.remote.GitHubApiException
 import com.hugoer.mobile.data.remote.GitHubApiService
 import com.hugoer.mobile.data.service.ConfigLocator
 import com.hugoer.mobile.data.service.FrontMatterService
 import com.hugoer.mobile.data.service.MarkdownPreviewService
+import com.hugoer.mobile.data.service.Slug
 import com.hugoer.mobile.data.service.ThemeCatalogService
 import com.hugoer.mobile.data.service.TomlParamsService
+import java.io.IOException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 enum class AppTab(val label: String) {
@@ -97,7 +105,8 @@ class AppViewModel(
     private var verifiedRepo: GitHubRepoInfo? = null
     private var verifiedLogin: String? = null
     private var verifiedToken: String = ""
-    private var loadJob: Job? = null
+    private val workMutex = Mutex()
+    private var searchJob: Job? = null
 
     init { loadSites() }
 
@@ -118,7 +127,7 @@ class AppViewModel(
 
     fun selectSite(site: SiteProfile) {
         _state.update { it.copy(activeSiteId = site.id, status = "已切換至 ${site.fullName}。", error = null) }
-        // Refresh the currently visible site's data immediately.
+        persistActiveSite(site.id)
         when (_state.value.selectedTab) {
             AppTab.CONFIG -> loadConfig()
             AppTab.THEMES -> loadThemes()
@@ -130,7 +139,11 @@ class AppViewModel(
 
     fun loadSites() = launchWork {
         val profiles = withContext(Dispatchers.IO) { siteStore.load() }
-        val active = _state.value.activeSiteId?.takeIf { id -> profiles.any { it.id == id } } ?: profiles.firstOrNull()?.id
+        val savedActive = withContext(Dispatchers.IO) { siteStore.loadActiveSiteId() }
+        val active = listOf(_state.value.activeSiteId, savedActive)
+            .firstOrNull { id -> id != null && profiles.any { it.id == id } }
+            ?: profiles.firstOrNull()?.id
+        persistActiveSite(active)
         _state.update { it.copy(sites = profiles, activeSiteId = active) }
     }
 
@@ -141,6 +154,7 @@ class AppViewModel(
         }
         val remaining = _state.value.sites.filterNot { it.id == site.id }
         val next = if (_state.value.activeSiteId == site.id) remaining.firstOrNull()?.id else _state.value.activeSiteId
+        persistActiveSite(next)
         _state.update { it.copy(sites = remaining, activeSiteId = next, status = "已移除 ${site.fullName} 的本機連結。") }
     }
 
@@ -149,6 +163,7 @@ class AppViewModel(
             _state.value.sites.forEach { tokenStore.remove(it.tokenKey) }
             siteStore.save(emptyList())
             tokenStore.clear()
+            siteStore.saveActiveSiteId(null)
         }
         _state.update { it.copy(sites = emptyList(), activeSiteId = null, selectedTab = AppTab.SITES, status = "已清除所有網站與權杖。") }
     }
@@ -167,21 +182,6 @@ class AppViewModel(
         verifiedTarget = target; verifiedRepo = repo; verifiedLogin = login; verifiedToken = token
         val summary = "已登入為 $login\n權限：${permissionLabel(repo)}\n預設分支：${repo.defaultBranch}\nPages 網址：${target.pagesUrl}"
         val profile = SiteProfile(
-                    owner = target.owner,
-                    repository = target.repository,
-                    displayName = target.repository,
-                    defaultBranch = repo.defaultBranch,
-                    pagesUrl = target.pagesUrl,
-                    isUserOrOrganizationSite = target.isUserOrOrganizationSite
-                )
-        _state.update { it.copy(verifiedSite = profile, verificationSummary = summary, status = "連線驗證成功。") }
-    }
-
-    fun saveVerifiedSite() = launchWork {
-        val target = verifiedTarget ?: throw UserFacingException("請先驗證連線。")
-        val repo = verifiedRepo ?: throw UserFacingException("請先驗證連線。")
-        val token = verifiedToken
-        val profile = SiteProfile(
             owner = target.owner,
             repository = target.repository,
             displayName = target.repository,
@@ -189,11 +189,43 @@ class AppViewModel(
             pagesUrl = target.pagesUrl,
             isUserOrOrganizationSite = target.isUserOrOrganizationSite
         )
+        _state.update { it.copy(verifiedSite = profile, verificationSummary = summary, status = "連線驗證成功。") }
+    }
+
+    fun saveVerifiedSite() = launchWork {
+        val target = verifiedTarget ?: throw UserFacingException("請先驗證連線。")
+        val repo = verifiedRepo ?: throw UserFacingException("請先驗證連線。")
+        val token = verifiedToken
+        val existing = _state.value.sites.firstOrNull {
+            it.owner.equals(target.owner, ignoreCase = true) &&
+                it.repository.equals(target.repository, ignoreCase = true)
+        }
+        val profile = SiteProfile(
+            id = existing?.id ?: java.util.UUID.randomUUID().toString().replace("-", ""),
+            owner = target.owner,
+            repository = target.repository,
+            displayName = target.repository,
+            defaultBranch = repo.defaultBranch,
+            pagesUrl = target.pagesUrl,
+            isUserOrOrganizationSite = target.isUserOrOrganizationSite,
+            addedAtUtc = existing?.addedAtUtc ?: System.currentTimeMillis()
+        )
+        val sites = _state.value.sites.filterNot { it.id == profile.id } + profile
         withContext(Dispatchers.IO) {
             tokenStore.save(profile.tokenKey, token)
-            siteStore.save(_state.value.sites + profile)
+            siteStore.save(sites)
+            siteStore.saveActiveSiteId(profile.id)
         }
-        _state.update { it.copy(sites = it.sites + profile, activeSiteId = profile.id, verifiedSite = null, verificationSummary = "", selectedTab = AppTab.SITES, status = "已新增並連結 ${profile.fullName}。") }
+        _state.update {
+            it.copy(
+                sites = sites,
+                activeSiteId = profile.id,
+                verifiedSite = null,
+                verificationSummary = "",
+                selectedTab = AppTab.SITES,
+                status = if (existing == null) "已新增並連結 ${profile.fullName}。" else "已更新 ${profile.fullName} 的連線。"
+            )
+        }
         verifiedTarget = null; verifiedRepo = null; verifiedToken = ""
     }
 
@@ -282,7 +314,14 @@ class AppViewModel(
         _state.update { it.copy(configSha = result.sha, rawToml = updated, currentTheme = theme.themeConfigValue, themeName = theme.themeConfigValue, status = "已套用主題 ${theme.themeConfigValue} 並推送到 GitHub。") }
     }
 
-    fun setContentSearch(value: String) { _state.update { it.copy(contentSearch = value) }; loadContent() }
+    fun setContentSearch(value: String) {
+        _state.update { it.copy(contentSearch = value) }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(300)
+            loadContent()
+        }
+    }
 
     fun loadContent() = launchWork {
         val site = activeSiteOrNull() ?: run { _state.update { it.copy(contentItems = emptyList()) }; return@launchWork }
@@ -302,7 +341,7 @@ class AppViewModel(
 
     fun startNewPost(title: String) {
         if (title.isBlank()) return
-        val slug = slugify(title)
+        val slug = Slug.fromTitle(title)
         val targetDir = if (_state.value.contentPath == "content") "content/posts" else _state.value.contentPath
         openEditor("$targetDir/$slug.md", isNew = true, newTitle = title)
     }
@@ -375,9 +414,12 @@ class AppViewModel(
     }
 
     private suspend fun refreshGithub(site: SiteProfile, token: String) {
-        val repo = withContext(Dispatchers.IO) { api.getRepoInfo(site.owner, site.repository, token) }
-        val pages = withContext(Dispatchers.IO) { api.getPagesStatus(site.owner, site.repository, token) }
-        val runs = withContext(Dispatchers.IO) { api.listWorkflowRuns(site.owner, site.repository, token) }
+        val (repo, pages, runs) = coroutineScope {
+            val repoDeferred = async(Dispatchers.IO) { api.getRepoInfo(site.owner, site.repository, token) }
+            val pagesDeferred = async(Dispatchers.IO) { api.getPagesStatus(site.owner, site.repository, token) }
+            val runsDeferred = async(Dispatchers.IO) { api.listWorkflowRuns(site.owner, site.repository, token) }
+            Triple(repoDeferred.await(), pagesDeferred.await(), runsDeferred.await())
+        }
         _state.update { it.copy(permissionSummary = repo?.let(::permissionLabel) ?: "無法讀取權限", pages = pages, runs = runs) }
     }
 
@@ -418,27 +460,36 @@ class AppViewModel(
         return token
     }
 
+    private fun persistActiveSite(id: String?) {
+        viewModelScope.launch(Dispatchers.IO) { siteStore.saveActiveSiteId(id) }
+    }
+
     private fun permissionLabel(repo: GitHubRepoInfo): String = when {
         repo.permissions.admin -> "管理員權限"
         repo.permissions.push -> "可推送內容"
         else -> "唯讀權限"
     }
 
-    private fun slugify(title: String): String {
-        var slug = title.trim().lowercase().map { c ->
-            when { c.isLetterOrDigit() -> c; c == ' ' || c == '-' || c == '_' -> '-'; else -> null }
-        }.filterNotNull().joinToString("")
-        while ("--" in slug) slug = slug.replace("--", "-")
-        return slug.trim('-').ifEmpty { (System.currentTimeMillis() / 1000).toString() }
+    private fun userFacingMessage(error: Exception): String = when (error) {
+        is UserFacingException, is GitHubApiException -> error.message ?: "操作失敗。"
+        is IOException -> "網路連線失敗，請稍後再試。"
+        else -> error.message ?: "操作失敗。"
     }
 
     private fun launchWork(block: suspend () -> Unit) {
-        if (_state.value.busy) return
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
-            _state.update { it.copy(busy = true, error = null) }
-            try { block() } catch (e: Exception) { _state.update { it.copy(error = e.message ?: "操作失敗。") } }
-            finally { _state.update { it.copy(busy = false) } }
+        viewModelScope.launch {
+            workMutex.withLock {
+                _state.update { it.copy(busy = true, error = null) }
+                try {
+                    block()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    _state.update { it.copy(error = userFacingMessage(e)) }
+                } finally {
+                    _state.update { it.copy(busy = false) }
+                }
+            }
         }
     }
 

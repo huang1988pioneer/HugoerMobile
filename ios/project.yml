@@ -21,7 +21,9 @@ targets:
       base:
         INFOPLIST_KEY_CFBundleDisplayName: Hugoer Mobile
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
-        INFOPLIST_KEY_CFBundleShortVersionString: "1.0"
+        MARKETING_VERSION: "1.2.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_KEY_CFBundleShortVersionString: "1.2.0"
         INFOPLIST_KEY_CFBundleVersion: "1"
         TARGETED_DEVICE_FAMILY: "1,2"
     scheme:

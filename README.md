@@ -114,13 +114,22 @@ xcodebuild build \
 
 在 GitHub CLI 已登入且具備 repository `Contents: write` 權限的環境執行：
 
+推送 `vX.Y.Z` tag 會觸發 `.github/workflows/release.yml`，建置 Android APK 與 iOS IPA 並附加到 GitHub Release：
+
+```bash
+git tag v1.2.0
+git push origin main --follow-tags
+```
+
+也可以用 GitHub CLI 手動執行：
+
 ```powershell
 Set-Location D:\codex\HugoerMobile
-gh workflow run release.yml --repo huang1988pioneer/HugoerMobile --ref main -f version=1.1.1 -f publish=true
+gh workflow run release.yml --repo huang1988pioneer/HugoerMobile --ref main -f version=1.2.0 -f publish=true
 gh run watch --repo huang1988pioneer/HugoerMobile
 ```
 
-若要從既有 tag 建置，另外傳入 `-f release_tag=v1.1.0`；此時 workflow 會以該 tag 的 commit checkout，不會誤用觸發分支。
+若要從既有 tag 建置，另外傳入 `-f release_tag=v1.1.1`；此時 workflow 會以該 tag 的 commit checkout，不會誤用觸發分支。
 
 ## 授權
 
