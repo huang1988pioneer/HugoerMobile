@@ -29,6 +29,13 @@ public static partial class MarkdownPreviewService
         return m.Success ? m.Groups[1].Value.Trim() : string.Empty;
     }
 
+    /// <summary>Body-only HTML (no document shell), used by the WYSIWYG editor.</summary>
+    public static string ToHtmlFragment(string markdown)
+    {
+        var bodyMd = StripFrontMatter(markdown);
+        return string.IsNullOrWhiteSpace(bodyMd) ? string.Empty : Markdown.ToHtml(bodyMd, Pipeline).Trim();
+    }
+
     public static string ToHtmlDocument(string markdown, string? title = null)
     {
         var bodyMd = StripFrontMatter(markdown);

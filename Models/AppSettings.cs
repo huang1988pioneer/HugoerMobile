@@ -7,6 +7,8 @@ public sealed class AppSettings
     public string? LastSitePath { get; set; }
     public string? PreferredHugoPath { get; set; }
     public string ThemeVariant { get; set; } = "Default";
+    /// <summary>Article editor mode: "Wysiwyg" (Quill visual editor) or "Source".</summary>
+    public string MarkdownEditorMode { get; set; } = "Wysiwyg";
 }
 
 public sealed class HugoInfo

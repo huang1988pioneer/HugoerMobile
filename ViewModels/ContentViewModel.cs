@@ -11,7 +11,13 @@ public partial class ContentViewModel : PageViewModelBase
     public ContentViewModel()
     {
         Title = "內容 Markdown";
+        IsWysiwygMode = !string.Equals(Services.Settings.Current.MarkdownEditorMode, "Source", StringComparison.OrdinalIgnoreCase);
     }
+
+    /// <summary>Site root used to resolve <c>static/</c> media for WYSIWYG previews.</summary>
+    public string? CurrentSitePath => Services.CurrentSitePath;
+
+    public FrontMatterService FrontMatter => Services.FrontMatter;
 
     public ObservableCollection<ContentItem> Files { get; } = [];
 
@@ -69,6 +75,36 @@ public partial class ContentViewModel : PageViewModelBase
 
     [ObservableProperty]
     public partial string EditorStatistics { get; set; } = "正文 0 字元 · 1 行";
+
+    /// <summary>True: Quill visual editor; false: raw Markdown source.</summary>
+    [ObservableProperty]
+    public partial bool IsWysiwygMode { get; set; } = true;
+
+    [ObservableProperty]
+    public partial string EditorModeTitle { get; set; } = "Markdown 視覺編輯（Quill）";
+
+    partial void OnIsWysiwygModeChanged(bool value)
+    {
+        EditorModeTitle = value ? "Markdown 視覺編輯（Quill）" : "Markdown 原始碼";
+        Services.Settings.Current.MarkdownEditorMode = value ? "Wysiwyg" : "Source";
+        try
+        {
+            Services.Settings.Save();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleEditorMode() => IsWysiwygMode = !IsWysiwygMode;
+
+    [RelayCommand]
+    private void SetWysiwygMode() => IsWysiwygMode = true;
+
+    [RelayCommand]
+    private void SetSourceMode() => IsWysiwygMode = false;
 
     private bool _loading;
     private bool _syncingFrontMatter;

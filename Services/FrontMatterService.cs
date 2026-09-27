@@ -34,6 +34,28 @@ public sealed partial class FrontMatterService
         };
     }
 
+    /// <summary>
+    /// Markdown body without its front matter (YAML <c>---</c> or TOML <c>+++</c>),
+    /// so body-only editors never see or rewrite the header.
+    /// </summary>
+    public string GetBody(string text)
+    {
+        text ??= string.Empty;
+        var match = AnyFrontMatterRegex().Match(text);
+        return match.Success ? text[match.Length..].TrimStart('\r', '\n') : text;
+    }
+
+    /// <summary>Replaces the body while keeping the front matter block byte-for-byte.</summary>
+    public string ReplaceBody(string text, string body)
+    {
+        text ??= string.Empty;
+        var newBody = (body ?? string.Empty).TrimStart('\r', '\n');
+        var match = AnyFrontMatterRegex().Match(text);
+        if (!match.Success)
+            return newBody;
+        return text[..match.Length].TrimEnd('\r', '\n') + "\n\n" + newBody;
+    }
+
     public string Write(FrontMatterDocument document)
     {
         var fields = document.Fields;
@@ -103,6 +125,9 @@ public sealed partial class FrontMatterService
 
     [GeneratedRegex(@"\A---\s*\r?\n(?<frontMatter>.*?)\r?\n---\s*(?:\r?\n|\z)", RegexOptions.Singleline)]
     private static partial Regex YamlBlockRegex();
+
+    [GeneratedRegex(@"\A(?<delim>---|\+\+\+)[ \t]*\r?\n.*?\r?\n\k<delim>[ \t]*(?:\r?\n|\z)", RegexOptions.Singleline)]
+    private static partial Regex AnyFrontMatterRegex();
 }
 
 public sealed class FrontMatterDocument
