@@ -9,7 +9,7 @@
     <Grid RowDefinitions="Auto,Auto,*" Margin="24">
         <StackPanel Spacing="8" Margin="0,0,0,12">
             <TextBlock Text="內容 Markdown" Classes="pageTitle"/>
-            <TextBlock Text="瀏覽 content/、使用格式工具列撰寫標準 Markdown，並即時預覽文章。"
+            <TextBlock Text="瀏覽 content/，以 Quill 視覺編輯或 Markdown 原始碼撰寫文章，並即時預覽。"
                        Classes="muted" TextWrapping="Wrap"/>
         </StackPanel>
 
@@ -74,10 +74,21 @@
                         <DockPanel>
                             <Border DockPanel.Dock="Top" Padding="10,8" Background="#121820"
                                     BorderBrush="#2A3648" BorderThickness="0,0,0,1">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <TextBlock Text="Markdown Rich Editor" Classes="sectionTitle"/>
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                    <TextBlock Text="{Binding EditorModeTitle}" Classes="sectionTitle"
+                                               VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1" Text="{Binding EditorStatistics}"
                                                Classes="caption" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4"
+                                                ToolTip.Tip="切換視覺編輯與 Markdown 原始碼（Ctrl+Shift+M）">
+                                        <ToggleButton Content="視覺" Padding="10,4"
+                                                      IsChecked="{Binding IsWysiwygMode, Mode=OneWay}"
+                                                      Command="{Binding SetWysiwygModeCommand}"
+                                                      ToolTip.Tip="Quill 所見即所得；可直接輸入 # 標題、- 清單、**粗體** 等 Markdown 語法"/>
+                                        <ToggleButton Content="原始碼" Padding="10,4"
+                                                      IsChecked="{Binding !IsWysiwygMode, Mode=OneWay}"
+                                                      Command="{Binding SetSourceModeCommand}"/>
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                             <Border DockPanel.Dock="Top" Padding="8,7" Background="#0F151D"
@@ -101,13 +112,18 @@
                                     <Button Content="分隔線" Click="HorizontalRule_OnClick" Padding="9,5" Margin="0,0,0,5"/>
                                 </WrapPanel>
                             </Border>
-                            <TextBox x:Name="MarkdownEditor"
-                                     Text="{Binding EditorText}"
-                                     AcceptsReturn="True"
-                                     TextWrapping="Wrap"
-                                     FontFamily="Consolas, Cascadia Mono, monospace"
-                                     Classes="codeEditor"
-                                     KeyDown="MarkdownEditor_OnKeyDown"/>
+                            <Grid>
+                                <TextBox x:Name="MarkdownEditor"
+                                         Text="{Binding EditorText}"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         FontFamily="Consolas, Cascadia Mono, monospace"
+                                         Classes="codeEditor"
+                                         IsVisible="{Binding !IsWysiwygMode}"
+                                         KeyDown="MarkdownEditor_OnKeyDown"/>
+                                <ctrl:MarkdownWysiwygEditor x:Name="WysiwygEditor"
+                                                            IsVisible="{Binding IsWysiwygMode}"/>
+                            </Grid>
                         </DockPanel>
                     </Border>
 
@@ -129,7 +145,7 @@
                 </Grid>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
-                    <Button Content="儲存" Classes="accent" Command="{Binding SaveCommand}"/>
+                    <Button Content="儲存" Classes="accent" Click="Save_OnClick"/>
                     <Button Content="{Binding PreviewModeLabel}" Command="{Binding TogglePreviewCommand}"/>
                     <Button Content="瀏覽器 HTML 預覽" Command="{Binding OpenHtmlPreviewCommand}"/>
                     <TextBlock Text="{Binding StatusMessage}" Classes="muted" VerticalAlignment="Center"/>
