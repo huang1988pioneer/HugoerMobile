@@ -30,6 +30,10 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <!-- The retired MAUI prototype lives beside the desktop app; keep it out of this build. -->
+    <Compile Remove="legacy-maui\**" />
+    <None Remove="legacy-maui\**" />
+    <Compile Remove="tests\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
