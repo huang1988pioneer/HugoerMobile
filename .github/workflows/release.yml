@@ -118,6 +118,9 @@ jobs:
             echo "::warning::ANDROID_KEYSTORE_BASE64 is not configured; CI will publish a QA preview-signed APK and an unsigned APK."
           fi
 
+      - name: Run web editor tests
+        run: node --test shared/tests/*.test.cjs
+
       - name: Run Android tests
         run: |
           set -euo pipefail

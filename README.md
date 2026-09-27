@@ -15,7 +15,7 @@
 | **站台** | 連結 GitHub repo（owner/repo + PAT）、管理多個已連結網站、切換目前作用中網站 |
 | **設定檔** | 基本欄位（baseURL / title / theme）、圖形化 **Params 表單**、原始 TOML 編輯，皆透過 Contents API 直接提交 |
 | **主題** | 顯示目前 `theme` 設定、精選主題目錄，一鍵切換 `theme` 值並推送 |
-| **內容** | 瀏覽 `content/`、新增／刪除文章、前置資料（front matter）表單 + 原生 Markdown／圖片／影片／PDF 即時預覽 |
+| **內容** | 瀏覽 `content/`、新增／刪除文章、前置資料（front matter）表單 + Quill 所見即所得 Markdown 編輯器 + 原生 Markdown／圖片／影片／PDF 即時預覽 |
 | **GitHub** | 權限檢查、Actions 執行紀錄、手動觸發部署、GitHub Pages 狀態與啟用 |
 
 ## 技術棧
@@ -38,7 +38,7 @@
 - Keychain Services 儲存 GitHub PAT
 - SwiftUI 原生顯示 Markdown、圖片、影片與 PDF 預覽
 
-兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser，並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。底部五個分頁的圖示與資訊架構以 v1.0.0 版面為基準；編輯器預覽額外支援常見 Hugo shortcode、相對媒體網址與不受信任 scheme 的安全拒絕。
+兩個原生版本都使用無第三方依賴的簡化 TOML 與 Markdown parser（文章內文編輯器例外：打包於 App 內的 Quill 2 與 marked，見 [`docs/editor-preview.md`](docs/editor-preview.md)），並保留桌面版 Hugoer 的 Hugo/Stack 常用設定與操作流程。底部五個分頁的圖示與資訊架構以 v1.0.0 版面為基準；編輯器預覽額外支援常見 Hugo shortcode、相對媒體網址與不受信任 scheme 的安全拒絕。
 
 ## 專案結構
 
@@ -48,6 +48,8 @@ HugoerMobile/
     app/src/main/java/com/hugoer/mobile/
   ios/                     iOS 原生 Swift + SwiftUI
     HugoerMobile/
+  shared/web/editor/       兩平台共用的 Quill Markdown 編輯器（WebView 載入）
+  shared/tests/            編輯器 Markdown 轉換測試（node --test）
   legacy-maui/             第一版 .NET MAUI 原型，僅供邏輯參考
   DESIGN.md                完整產品與行動 UI 設計
 ```

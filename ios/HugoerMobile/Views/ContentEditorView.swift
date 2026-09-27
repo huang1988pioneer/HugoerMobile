@@ -2,6 +2,7 @@ import SwiftUI
 
 private enum EditorMode: String, CaseIterable, Identifiable {
     case edit = "編輯"
+    case source = "Markdown"
     case preview = "預覽"
     var id: String { rawValue }
 }
@@ -11,13 +12,14 @@ struct ContentEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var mode: EditorMode = .edit
     @State private var showDeleteConfirm = false
-    @State private var frontMatterExpanded = true
+    @State private var frontMatterExpanded: Bool
 
     private let site: SiteProfile
     private let token: String
 
     init(path: String, isNewFile: Bool, initialTitle: String = "", site: SiteProfile, token: String) {
         _viewModel = StateObject(wrappedValue: ContentEditorViewModel(path: path, isNewFile: isNewFile, initialTitle: initialTitle))
+        _frontMatterExpanded = State(initialValue: isNewFile)
         self.site = site
         self.token = token
     }
@@ -35,7 +37,7 @@ struct ContentEditorView: View {
             if viewModel.isLoading {
                 ProgressView("載入中…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if mode == .edit {
+            } else if mode != .preview {
                 editForm
             } else {
                 ScrollView {
@@ -105,43 +107,55 @@ struct ContentEditorView: View {
     }
 
     private var editForm: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                DisclosureGroup("前置資料 (Front Matter)", isExpanded: $frontMatterExpanded) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        LabeledField(label: "標題") {
-                            TextField("文章標題", text: $viewModel.title)
-                        }
-                        LabeledField(label: "日期") {
-                            TextField("YYYY-MM-DDTHH:mm:ssZ", text: $viewModel.dateText)
-                                .textInputAutocapitalization(.never)
-                        }
-                        LabeledField(label: "標籤 (逗號分隔)") {
-                            TextField("tag1, tag2", text: $viewModel.tags)
-                                .textInputAutocapitalization(.never)
-                        }
-                        LabeledField(label: "分類 (逗號分隔)") {
-                            TextField("category1, category2", text: $viewModel.categories)
-                                .textInputAutocapitalization(.never)
-                        }
-                        Toggle("草稿 (draft)", isOn: $viewModel.draft)
+        VStack(alignment: .leading, spacing: 12) {
+            DisclosureGroup("前置資料 (Front Matter)", isExpanded: $frontMatterExpanded) {
+                VStack(alignment: .leading, spacing: 12) {
+                    LabeledField(label: "標題") {
+                        TextField("文章標題", text: $viewModel.title)
                     }
-                    .padding(.top, 8)
+                    LabeledField(label: "日期") {
+                        TextField("YYYY-MM-DDTHH:mm:ssZ", text: $viewModel.dateText)
+                            .textInputAutocapitalization(.never)
+                    }
+                    LabeledField(label: "標籤 (逗號分隔)") {
+                        TextField("tag1, tag2", text: $viewModel.tags)
+                            .textInputAutocapitalization(.never)
+                    }
+                    LabeledField(label: "分類 (逗號分隔)") {
+                        TextField("category1, category2", text: $viewModel.categories)
+                            .textInputAutocapitalization(.never)
+                    }
+                    Toggle("草稿 (draft)", isOn: $viewModel.draft)
                 }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                Text("內文 (Markdown)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                TextEditor(text: $viewModel.body)
-                    .frame(minHeight: 320)
-                    .font(.system(.body, design: .monospaced))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.3)))
+                .padding(.top, 8)
             }
             .padding()
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+            Text(mode == .edit ? "內文（所見即所得，儲存為 Markdown）" : "內文 (Markdown)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Group {
+                if mode == .edit {
+                    QuillMarkdownEditor(
+                        markdown: $viewModel.body,
+                        baseURL: site.pagesUrl,
+                        documentPath: viewModel.path
+                    )
+                } else {
+                    TextEditor(text: $viewModel.body)
+                        .font(.system(.body, design: .monospaced))
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.3)))
         }
+        .padding([.horizontal, .bottom])
     }
 }
 

@@ -1,0 +1,283 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1c1b1f;
+  --muted: #6b6870;
+  --border: #d9d6de;
+  --surface: #f4f2f7;
+  --accent: #5b4bb7;
+  --raw-bg: #f1eefb;
+  --raw-border: #cfc6f3;
+  --code-bg: #f3f3f5;
+  --scrim: rgba(0, 0, 0, 0.4);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1b1f;
+    --fg: #e6e1e5;
+    --muted: #a8a3ad;
+    --border: #3c3a41;
+    --surface: #26252a;
+    --accent: #c4b8ff;
+    --raw-bg: #2b2640;
+    --raw-border: #4a4170;
+    --code-bg: #2a292e;
+    --scrim: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1c1b1f;
+  --fg: #e6e1e5;
+  --muted: #a8a3ad;
+  --border: #3c3a41;
+  --surface: #26252a;
+  --accent: #c4b8ff;
+  --raw-bg: #2b2640;
+  --raw-border: #4a4170;
+  --code-bg: #2a292e;
+  --scrim: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Toolbar: one horizontally scrollable row that stays visible while typing. */
+#toolbar.ql-toolbar.ql-snow {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 6px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-family: inherit;
+}
+#toolbar::-webkit-scrollbar { display: none; }
+#toolbar .ql-formats {
+  display: flex;
+  flex: 0 0 auto;
+  margin-right: 10px;
+}
+#toolbar button {
+  width: 36px;
+  height: 36px;
+  padding: 7px;
+  border-radius: 8px;
+}
+#toolbar button .ql-thin { stroke-width: 1; }
+.ql-snow .ql-stroke { stroke: var(--fg); }
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill { fill: var(--fg); }
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: var(--accent); }
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--accent); }
+.ql-snow.ql-toolbar button.ql-active { background: var(--raw-bg); }
+
+#editor.ql-container.ql-snow {
+  border: 0;
+  font-family: inherit;
+  font-size: 17px;
+}
+
+.ql-editor {
+  min-height: calc(100vh - 49px);
+  padding: 16px 16px 40vh;
+  line-height: 1.65;
+  color: var(--fg);
+  word-break: break-word;
+}
+.ql-editor.ql-blank::before {
+  left: 16px;
+  right: 16px;
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* Each Quill line is saved as its own Markdown paragraph, so show it like one. */
+.ql-editor p { margin: 0 0 0.75em; }
+.ql-editor h1, .ql-editor h2, .ql-editor h3,
+.ql-editor h4, .ql-editor h5, .ql-editor h6 { margin: 1em 0 0.5em; line-height: 1.3; }
+.ql-editor h1 { font-size: 1.7em; }
+.ql-editor h2 { font-size: 1.4em; }
+.ql-editor h3 { font-size: 1.2em; }
+.ql-editor ol { margin: 0 0 0.75em; padding-left: 0.5em; }
+.ql-editor li[data-list="checked"] { color: var(--muted); }
+.ql-editor li[data-list="checked"] > .ql-ui,
+.ql-editor li[data-list="unchecked"] > .ql-ui { color: var(--accent); }
+.ql-snow .ql-editor blockquote {
+  margin: 0 0 0.75em;
+  padding-left: 12px;
+  border-left: 4px solid var(--border);
+  color: var(--muted);
+}
+.ql-snow .ql-editor code {
+  background: var(--code-bg);
+  color: var(--fg);
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.ql-snow .ql-editor .ql-code-block-container {
+  background: var(--code-bg);
+  color: var(--fg);
+  border-radius: 8px;
+  margin: 0 0 0.75em;
+  padding: 10px 12px;
+  font-size: 14px;
+  overflow-x: auto;
+}
+.ql-editor .ql-code-block-container[data-language]::before,
+.ql-editor .ql-code-block[data-language]:first-child::before {
+  content: none;
+}
+.ql-snow .ql-editor a { color: var(--accent); }
+.ql-editor img { max-width: 100%; height: auto; border-radius: 6px; }
+.ql-editor img.md-image-unavailable {
+  display: inline-block;
+  min-width: 120px;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+.ql-editor hr {
+  border: 0;
+  border-top: 2px solid var(--border);
+  margin: 1.2em 0;
+}
+
+/* Verbatim Markdown (shortcodes, tables, HTML ...) the rich editor keeps untouched. */
+.ql-editor .md-raw {
+  position: relative;
+  margin: 0 0 0.75em;
+  padding: 26px 12px 10px;
+  background: var(--raw-bg);
+  border: 1px solid var(--raw-border);
+  border-radius: 8px;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.ql-editor .md-raw::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  color: var(--accent);
+  font: 600 11px/1.4 -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+.ql-editor .md-raw-inline {
+  padding: 1px 5px;
+  margin: 0 1px;
+  background: var(--raw-bg);
+  border: 1px solid var(--raw-border);
+  border-radius: 4px;
+  font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  cursor: pointer;
+}
+
+/* Tooltip labels for Quill's link preview. */
+.ql-snow .ql-tooltip {
+  background: var(--surface);
+  color: var(--fg);
+  border-color: var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  max-width: calc(100vw - 24px);
+  z-index: 6;
+}
+.ql-snow .ql-tooltip::before { content: "連結："; }
+.ql-snow .ql-tooltip a.ql-action::after { content: "編輯"; }
+.ql-snow .ql-tooltip a.ql-remove::before { content: "移除"; }
+.ql-snow .ql-tooltip.ql-editing a.ql-action::after { content: "儲存"; }
+.ql-snow .ql-tooltip[data-mode=link]::before { content: "輸入連結："; }
+.ql-snow .ql-tooltip input[type=text] {
+  background: var(--bg);
+  color: var(--fg);
+  border-color: var(--border);
+}
+
+/* In-page dialogs (window.prompt is not available in native web views). */
+.md-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--scrim);
+}
+.md-dialog[hidden] { display: none; }
+.md-dialog-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-radius: 16px 16px 0 0;
+}
+.md-dialog-title { margin: 0 0 12px; font-size: 17px; }
+.md-dialog-fields label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.md-dialog-fields input,
+.md-dialog-fields textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 16px;
+}
+.md-dialog-fields textarea {
+  min-height: 160px;
+  font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  resize: vertical;
+}
+.md-dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.md-dialog-actions button {
+  min-width: 72px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 15px;
+}
+.md-dialog-actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.md-dialog-actions button.danger { color: #d93025; margin-right: auto; }

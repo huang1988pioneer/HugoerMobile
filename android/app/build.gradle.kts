@@ -77,6 +77,13 @@ android {
         buildConfig = true
     }
 
+    sourceSets {
+        getByName("main") {
+            // Quill-based rich Markdown editor shared with iOS, packaged as assets/editor/.
+            assets.srcDir("../../shared/web")
+        }
+    }
+
     lint {
         // AGP lint's UAST cleanup is incompatible with the installed Java 26 runtime;
         // release compilation and packaging remain enabled.

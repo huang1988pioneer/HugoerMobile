@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A7F1C9D42B6E4F8A91D3E205 /* ArticlePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */; };
 		17EA38D3BD24DA13AD592F95 /* ConnectSiteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570879D2E1EC1474BE19A5DE /* ConnectSiteViewModel.swift */; };
 		180C1F31289D6D46C8334DA0 /* KeychainTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54001C5F43D50E711B06BEC6 /* KeychainTokenStore.swift */; };
 		1A69EECE2DF6688104232223 /* GitHubApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7717D3F35E36D916649C4024 /* GitHubApiService.swift */; };
@@ -17,12 +16,15 @@
 		3CCAD391E362C0A87BE80043 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B78552916648700B78A542 /* SettingsView.swift */; };
 		43638677134922C607314413 /* ContentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07CA2210BA6F9E86C6C467D /* ContentEditorView.swift */; };
 		46AFECACDECBA00BA2C14721 /* GitHubViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95412CD95D93F7728A6D0C1F /* GitHubViewModel.swift */; };
+		54F454271FC1E5BF21419EBB /* ArticlePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA2A0CED51DDE4261E0D62C /* ArticlePreview.swift */; };
 		5B41D3A51F17B57B390F6FC3 /* ThemesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99713D587C53A20B303F43DA /* ThemesView.swift */; };
 		5D56CBD9CC0E742C49BB9909 /* NoActiveSiteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */; };
+		5D6589CC0463D01F27E625E8 /* QuillMarkdownEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74BE7CA846A442D8EECB29A /* QuillMarkdownEditor.swift */; };
 		61846C1BF8525ABF5DF3E216 /* GitHubApiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED71AA96F7AC1E585E8AC894 /* GitHubApiModels.swift */; };
 		66D0F284F79955BF2F7D4FFA /* ActiveSiteState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5552BA3CACC54D226F14820E /* ActiveSiteState.swift */; };
 		6BFB5FB849026D018097BA10 /* ThemesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019AC98A734FF6324CDF573D /* ThemesViewModel.swift */; };
 		722B0404A9625699238E3163 /* TomlParamsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B03AB9754C694A12E0D49CD /* TomlParamsService.swift */; };
+		78AB34C467F966CB38235FE4 /* editor in Resources */ = {isa = PBXBuildFile; fileRef = 9AF7F7288126BF2B60741D82 /* editor */; };
 		78EC0C99863DC0A24E09732F /* FrontMatterDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3538BD1AF9E960F3E00239C7 /* FrontMatterDocument.swift */; };
 		7ADB0558A50554D6210E911C /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B276434D860FB15DE38E98 /* RootTabView.swift */; };
 		92FCF33611C42EE11BF6675A /* FrontMatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E269E89081396ACE734FB01 /* FrontMatterService.swift */; };
@@ -48,7 +50,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePreview.swift; sourceTree = "<group>"; };
 		019AC98A734FF6324CDF573D /* ThemesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesViewModel.swift; sourceTree = "<group>"; };
 		085C4F0AE5AE33FBB3E161FE /* GitHubRepositoryTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubRepositoryTarget.swift; sourceTree = "<group>"; };
 		10CF843C091579A84BB186A3 /* HugoerMobile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HugoerMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,12 +70,14 @@
 		5FB53EA0BB4C2B9C3FCEB5E2 /* SiteProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteProfileStore.swift; sourceTree = "<group>"; };
 		5FE5F3F47C12B85ACD79F05E /* ThemeCatalogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCatalogService.swift; sourceTree = "<group>"; };
 		6498ED2F64282B61E4BA237E /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		6CA2A0CED51DDE4261E0D62C /* ArticlePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlePreview.swift; sourceTree = "<group>"; };
 		7717D3F35E36D916649C4024 /* GitHubApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubApiService.swift; sourceTree = "<group>"; };
 		7825343F0929B4F39AF5C2DB /* ConfigViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigViewModel.swift; sourceTree = "<group>"; };
 		78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoActiveSiteView.swift; sourceTree = "<group>"; };
 		91C99294C02D1299B15CF21E /* ContentBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBrowserView.swift; sourceTree = "<group>"; };
 		95412CD95D93F7728A6D0C1F /* GitHubViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubViewModel.swift; sourceTree = "<group>"; };
 		99713D587C53A20B303F43DA /* ThemesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesView.swift; sourceTree = "<group>"; };
+		9AF7F7288126BF2B60741D82 /* editor */ = {isa = PBXFileReference; lastKnownFileType = folder; name = editor; path = ../shared/web/editor; sourceTree = SOURCE_ROOT; };
 		A0639D5AB4476225255CF79B /* TomlLite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TomlLite.swift; sourceTree = "<group>"; };
 		A5BA22A00DB83453DF2E7406 /* MarkdownWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownWebView.swift; sourceTree = "<group>"; };
 		AB473295939FB6038F7E7230 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -88,6 +91,7 @@
 		EAF1106068D9503481FB7E07 /* ThemeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeInfo.swift; sourceTree = "<group>"; };
 		ED71AA96F7AC1E585E8AC894 /* GitHubApiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubApiModels.swift; sourceTree = "<group>"; };
 		F07CA2210BA6F9E86C6C467D /* ContentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentEditorView.swift; sourceTree = "<group>"; };
+		F74BE7CA846A442D8EECB29A /* QuillMarkdownEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuillMarkdownEditor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -95,14 +99,23 @@
 			isa = PBXGroup;
 			children = (
 				C1D1DB2F6E28DB16DFC57262 /* HugoerMobile */,
+				A7FA511D2B725A03C8362671 /* HugoerMobile */,
 				7F3606818FBA554301477EED /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		0FC6E1C88FF10998F0499DC6 /* shared */ = {
+			isa = PBXGroup;
+			children = (
+				413A532000628E88AF6C9813 /* web */,
+			);
+			path = shared;
 			sourceTree = "<group>";
 		};
 		2B1DCA8F9517FBDEE0348D37 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B8E2D0F53C7A4B9E82F1D306 /* ArticlePreview.swift */,
+				6CA2A0CED51DDE4261E0D62C /* ArticlePreview.swift */,
 				4DCEEDD5B3AEB5EE746FF425 /* ConfigView.swift */,
 				E1CCF27756B53A61F0F21F1D /* ConnectSiteView.swift */,
 				91C99294C02D1299B15CF21E /* ContentBrowserView.swift */,
@@ -110,12 +123,21 @@
 				3F77AF86F44BA418BE0C747B /* GitHubView.swift */,
 				A5BA22A00DB83453DF2E7406 /* MarkdownWebView.swift */,
 				78ED59D05D51D1CF72EFF8E2 /* NoActiveSiteView.swift */,
+				F74BE7CA846A442D8EECB29A /* QuillMarkdownEditor.swift */,
 				44B276434D860FB15DE38E98 /* RootTabView.swift */,
 				E8B78552916648700B78A542 /* SettingsView.swift */,
 				50C1E25ED93E69126589647C /* SitesView.swift */,
 				99713D587C53A20B303F43DA /* ThemesView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		413A532000628E88AF6C9813 /* web */ = {
+			isa = PBXGroup;
+			children = (
+				9AF7F7288126BF2B60741D82 /* editor */,
+			);
+			path = web;
 			sourceTree = "<group>";
 		};
 		46F20E46F12FD6B53CB24597 /* ViewModels */ = {
@@ -152,6 +174,15 @@
 				10CF843C091579A84BB186A3 /* HugoerMobile.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A7FA511D2B725A03C8362671 /* HugoerMobile */ = {
+			isa = PBXGroup;
+			children = (
+				0FC6E1C88FF10998F0499DC6 /* shared */,
+			);
+			name = HugoerMobile;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		C1D1DB2F6E28DB16DFC57262 /* HugoerMobile */ = {
@@ -201,6 +232,7 @@
 			buildConfigurationList = 3FE861E0F6B3C4B230F41701 /* Build configuration list for PBXNativeTarget "HugoerMobile" */;
 			buildPhases = (
 				25D183370832947BCA3EB375 /* Sources */,
+				46246130F487C3D0148A85C3 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -243,14 +275,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		46246130F487C3D0148A85C3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78AB34C467F966CB38235FE4 /* editor in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		25D183370832947BCA3EB375 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				66D0F284F79955BF2F7D4FFA /* ActiveSiteState.swift in Sources */,
-				A7F1C9D42B6E4F8A91D3E205 /* ArticlePreview.swift in Sources */,
 				D0AFBA3DEA6B54FD9904DB25 /* AppState.swift in Sources */,
+				54F454271FC1E5BF21419EBB /* ArticlePreview.swift in Sources */,
 				938F5193D780D637C04B5F76 /* ConfigLocator.swift in Sources */,
 				2D5E80153B666376FFA3BF32 /* ConfigView.swift in Sources */,
 				CE73626744B3D79596EA8C77 /* ConfigViewModel.swift in Sources */,
@@ -275,6 +318,7 @@
 				EB7BBCCD1AB252C4D49FD801 /* MiniMarkdown.swift in Sources */,
 				5D56CBD9CC0E742C49BB9909 /* NoActiveSiteView.swift in Sources */,
 				F93CD56C7C4222ACFA27926F /* ParamFieldItem.swift in Sources */,
+				5D6589CC0463D01F27E625E8 /* QuillMarkdownEditor.swift in Sources */,
 				7ADB0558A50554D6210E911C /* RootTabView.swift in Sources */,
 				3CCAD391E362C0A87BE80043 /* SettingsView.swift in Sources */,
 				F9D50DCF73988B0073268AA4 /* SiteProfile.swift in Sources */,
@@ -422,6 +466,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = HugoerMobile/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
 				INFOPLIST_KEY_CFBundleShortVersionString = 1.2.0;
@@ -433,7 +478,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.0;
-				CURRENT_PROJECT_VERSION = 1;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -444,6 +488,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = HugoerMobile/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hugoer Mobile";
 				INFOPLIST_KEY_CFBundleShortVersionString = 1.2.0;
@@ -455,7 +500,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.0;
-				CURRENT_PROJECT_VERSION = 1;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

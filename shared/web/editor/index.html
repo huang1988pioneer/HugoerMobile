@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src https: data:; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light dark">
+  <title>Hugoer Markdown Editor</title>
+  <link rel="stylesheet" href="vendor/quill.snow.css">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <div id="toolbar" role="toolbar" aria-label="格式">
+    <span class="ql-formats">
+      <button type="button" class="ql-undo" aria-label="復原"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M5 7h6a4 4 0 0 1 0 8H8"/><polyline class="ql-stroke" points="7.5 4.5 5 7 7.5 9.5"/></svg></button>
+      <button type="button" class="ql-redo" aria-label="重做"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M13 7H7a4 4 0 0 0 0 8h3"/><polyline class="ql-stroke" points="10.5 4.5 13 7 10.5 9.5"/></svg></button>
+    </span>
+    <span class="ql-formats">
+      <button type="button" class="ql-header" value="1" aria-label="標題 1"></button>
+      <button type="button" class="ql-header" value="2" aria-label="標題 2"></button>
+      <button type="button" class="ql-header" value="3" aria-label="標題 3"></button>
+    </span>
+    <span class="ql-formats">
+      <button type="button" class="ql-bold" aria-label="粗體"></button>
+      <button type="button" class="ql-italic" aria-label="斜體"></button>
+      <button type="button" class="ql-strike" aria-label="刪除線"></button>
+      <button type="button" class="ql-code" aria-label="行內程式碼"></button>
+      <button type="button" class="ql-link" aria-label="連結"></button>
+    </span>
+    <span class="ql-formats">
+      <button type="button" class="ql-list" value="bullet" aria-label="項目清單"></button>
+      <button type="button" class="ql-list" value="ordered" aria-label="編號清單"></button>
+      <button type="button" class="ql-list" value="check" aria-label="待辦清單"></button>
+      <button type="button" class="ql-indent" value="-1" aria-label="減少縮排"></button>
+      <button type="button" class="ql-indent" value="+1" aria-label="增加縮排"></button>
+    </span>
+    <span class="ql-formats">
+      <button type="button" class="ql-blockquote" aria-label="引言"></button>
+      <button type="button" class="ql-code-block" aria-label="程式碼區塊"></button>
+      <button type="button" class="ql-image" aria-label="插入圖片"></button>
+      <button type="button" class="ql-divider" aria-label="分隔線"><svg viewBox="0 0 18 18"><line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"/><line class="ql-stroke ql-thin" x1="5" x2="13" y1="5" y2="5"/><line class="ql-stroke ql-thin" x1="5" x2="13" y1="13" y2="13"/></svg></button>
+      <button type="button" class="ql-rawblock" aria-label="插入 Markdown／短代碼"><svg viewBox="0 0 18 18"><polyline class="ql-stroke" points="6 4 3 9 6 14"/><polyline class="ql-stroke" points="12 4 15 9 12 14"/><line class="ql-stroke" x1="10" x2="8" y1="4" y2="14"/></svg></button>
+      <button type="button" class="ql-clean" aria-label="清除格式"></button>
+    </span>
+  </div>
+  <div id="editor"></div>
+
+  <div id="dialog" class="md-dialog" hidden>
+    <form class="md-dialog-card" autocomplete="off" novalidate>
+      <h2 class="md-dialog-title"></h2>
+      <div class="md-dialog-fields"></div>
+      <div class="md-dialog-actions"></div>
+    </form>
+  </div>
+
+  <script src="vendor/marked.umd.js"></script>
+  <script src="vendor/quill.js"></script>
+  <script src="markdown-delta.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>
