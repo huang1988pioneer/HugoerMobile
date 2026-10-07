@@ -5,14 +5,8 @@
              x:Class="Hugoer.Views.ConfigView"
              x:DataType="vm:ConfigViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
-        <StackPanel Spacing="8" Margin="0,0,0,12">
-            <TextBlock Text="設定檔" Classes="pageTitle"/>
-            <TextBlock Text="網站基本設定、Hugo 官方進階設定、圖形化主題 params，以及原始 TOML 編輯。"
-                       Classes="muted" TextWrapping="Wrap"/>
-        </StackPanel>
-
-        <Grid Grid.Row="1" ColumnDefinitions="240,*">
+    <Grid Margin="24">
+        <Grid ColumnDefinitions="240,*">
             <Border Classes="card" Margin="0,0,12,0" Padding="12">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
@@ -84,16 +78,14 @@
                                     <ItemsControl ItemsSource="{Binding ConfigFields}" Margin="12">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="svc:ConfigFieldItem">
-                                                <Border Margin="0,0,0,10" Padding="12"
-                                                        Background="#121820" CornerRadius="8"
-                                                        BorderBrush="#2A3648" BorderThickness="1">
+                                                <Border Margin="0,0,0,10" Classes="inset">
                                                     <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <CheckBox Content="寫入設定" IsChecked="{Binding IsConfigured}"
                                                                       VerticalAlignment="Center"/>
                                                             <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
                                                                        FontSize="15" VerticalAlignment="Center"/>
-                                                            <Border Background="#1B2A3B" CornerRadius="10" Padding="8,2">
+                                                            <Border Classes="chip">
                                                                 <TextBlock Text="{Binding Group}" Classes="caption"/>
                                                             </Border>
                                                         </StackPanel>
@@ -101,7 +93,7 @@
                                                                 Command="{Binding OpenDocumentationCommand}"/>
 
                                                         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Path}"
-                                                                   Classes="mono" Foreground="#67D8FF" Margin="0,7,0,2"/>
+                                                                   Classes="token" Margin="0,7,0,2"/>
                                                         <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Description}"
                                                                    Classes="caption" TextWrapping="Wrap" Margin="0,0,0,8"/>
 
@@ -159,9 +151,7 @@
                                     <ItemsControl ItemsSource="{Binding ParamFields}" Margin="12">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="svc:ParamFieldItem">
-                                                <Border Margin="0,0,0,10" Padding="10"
-                                                        Background="#121820" CornerRadius="8"
-                                                        BorderBrush="#2A3648" BorderThickness="1">
+                                                <Border Margin="0,0,0,10" Classes="inset">
                                                     <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto">
                                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                                             <CheckBox Content="寫入" IsChecked="{Binding IsConfigured}"
@@ -213,8 +203,7 @@
                     <Button Content="儲存" Classes="accent" Command="{Binding SaveCommand}"/>
                     <Button Content="重新載入檔案" Command="{Binding LoadSelectedCommand}"/>
                     <TextBlock Text="{Binding StatusMessage}" Classes="muted" VerticalAlignment="Center"/>
-                    <TextBlock Text="● 未儲存" Foreground="#E6A23C" VerticalAlignment="Center"
-                               IsVisible="{Binding IsDirty}"/>
+                    <TextBlock Text="● 未儲存" Classes="dirty" IsVisible="{Binding IsDirty}"/>
                 </StackPanel>
             </Grid>
         </Grid>

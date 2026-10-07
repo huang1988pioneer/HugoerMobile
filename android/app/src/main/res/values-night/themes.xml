@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.HugoerMobile" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#1A1613</item>
+        <item name="android:navigationBarColor">#1A1613</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">#12100E</item>
+    </style>
+</resources>

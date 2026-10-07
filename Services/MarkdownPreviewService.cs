@@ -60,30 +60,30 @@ public static partial class MarkdownPreviewService
 :root { color-scheme: dark; }
 html, body {
   margin: 0; padding: 0;
-  background: #0d1218;
-  color: #e6edf3;
+  background: #161310;
+  color: #f6f0e8;
   font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
   font-size: 15px;
   line-height: 1.65;
 }
 .markdown-body { padding: 20px 24px 40px; max-width: 820px; }
-h1, h2, h3, h4, h5, h6 { color: #7cdaf9; margin-top: 1.4em; margin-bottom: 0.5em; font-weight: 650; }
-h1 { font-size: 1.9em; border-bottom: 1px solid #2a3648; padding-bottom: 0.25em; }
-h2 { font-size: 1.5em; border-bottom: 1px solid #243041; padding-bottom: 0.2em; }
+h1, h2, h3, h4, h5, h6 { color: #e8a15a; margin-top: 1.4em; margin-bottom: 0.5em; font-weight: 650; }
+h1 { font-size: 1.9em; border-bottom: 1px solid #3a312a; padding-bottom: 0.25em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #3a312a; padding-bottom: 0.2em; }
 h3 { font-size: 1.25em; }
 p { margin: 0.75em 0; }
-a { color: #5ec8f0; text-decoration: none; }
+a { color: #e8a15a; text-decoration: none; }
 a:hover { text-decoration: underline; }
 code {
   font-family: Consolas, "Cascadia Mono", monospace;
-  background: #1a2330;
+  background: #2a241c;
   padding: 0.15em 0.4em;
   border-radius: 4px;
   font-size: 0.92em;
 }
 pre {
-  background: #121a24;
-  border: 1px solid #2a3648;
+  background: #1c1814;
+  border: 1px solid #3a312a;
   border-radius: 8px;
   padding: 12px 14px;
   overflow: auto;
@@ -92,15 +92,15 @@ pre code { background: transparent; padding: 0; }
 blockquote {
   margin: 1em 0;
   padding: 0.4em 1em;
-  border-left: 4px solid #0e7490;
-  background: #151c26;
-  color: #c5d0dc;
+  border-left: 4px solid #c47a32;
+  background: #221c18;
+  color: #e7d9cc;
 }
 table { border-collapse: collapse; width: 100%; margin: 1em 0; }
-th, td { border: 1px solid #2a3648; padding: 8px 10px; }
-th { background: #1a2330; }
+th, td { border: 1px solid #3a312a; padding: 8px 10px; }
+th { background: #2a241c; }
 img { max-width: 100%; border-radius: 6px; }
-hr { border: none; border-top: 1px solid #2a3648; margin: 1.5em 0; }
+hr { border: none; border-top: 1px solid #3a312a; margin: 1.5em 0; }
 ul, ol { padding-left: 1.4em; }
 li { margin: 0.25em 0; }
 strong { color: #fff; }

@@ -6,10 +6,10 @@ import Foundation
 enum MarkdownPreviewService {
     static func renderToHtmlDocument(_ markdown: String, isDarkMode: Bool) -> String {
         let body = MiniMarkdown.toHtml(markdown)
-        let bg = isDarkMode ? "#141318" : "#F6F5FA"
-        let fg = isDarkMode ? "#F2F1F7" : "#1B1B1F"
-        let codeBg = isDarkMode ? "#26242E" : "#EFEDF5"
-        let link = "#6E56CF"
+        let bg = isDarkMode ? "#161310" : "#FBF7F2"
+        let fg = isDarkMode ? "#F6F0E8" : "#1C1612"
+        let codeBg = isDarkMode ? "#221C18" : "#F3EBE3"
+        let link = isDarkMode ? "#E8A15A" : "#8C4E1A"
 
         return """
         <!DOCTYPE html>

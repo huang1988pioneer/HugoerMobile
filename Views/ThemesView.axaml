@@ -5,14 +5,8 @@
              x:Class="Hugoer.Views.ThemesView"
              x:DataType="vm:ThemesViewModel">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
-        <StackPanel Spacing="8" Margin="0,0,0,12">
-            <TextBlock Text="主題 Themes" Classes="pageTitle"/>
-            <TextBlock Text="一鍵安裝熱門主題（推薦 Stack），並編輯主題／站點設定。"
-                       Classes="muted" TextWrapping="Wrap"/>
-        </StackPanel>
-
-        <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,*,Auto">
+    <Grid Margin="24">
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,*,Auto">
             <Border Classes="card" Grid.ColumnSpan="2" Margin="0,0,0,12">
                 <StackPanel Spacing="10">
                     <TextBlock Text="預設主題庫" Classes="sectionTitle"/>

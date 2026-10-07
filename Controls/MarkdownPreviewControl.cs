@@ -30,7 +30,7 @@ public sealed class MarkdownPreviewControl : UserControl
 
         _root = new Border
         {
-            Background = new SolidColorBrush(Color.Parse("#0D1218")),
+            Background = new SolidColorBrush(Color.Parse("#14110E")),
             Child = _fallbackScroll
         };
 
@@ -71,14 +71,14 @@ public sealed class MarkdownPreviewControl : UserControl
             {
                 Text = "Front Matter",
                 FontWeight = FontWeight.SemiBold,
-                Foreground = Brush("#7CDAF9"),
+                Foreground = Brush("#E8A15A"),
                 FontSize = 12,
                 Opacity = 0.9
             });
             _fallbackPanel.Children.Add(new Border
             {
-                Background = Brush("#151C26"),
-                BorderBrush = Brush("#2A3648"),
+                Background = Brush("#221C18"),
+                BorderBrush = Brush("#3A312A"),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(10),
@@ -87,7 +87,7 @@ public sealed class MarkdownPreviewControl : UserControl
                     Text = front,
                     FontFamily = new FontFamily("Consolas, Cascadia Mono, monospace"),
                     FontSize = 12,
-                    Foreground = Brush("#C5D0DC"),
+                    Foreground = Brush("#E7D9CC"),
                     TextWrapping = TextWrapping.Wrap
                 }
             });
@@ -134,8 +134,8 @@ public sealed class MarkdownPreviewControl : UserControl
             codeBuffer.Clear();
             _fallbackPanel.Children.Add(new Border
             {
-                Background = Brush("#121A24"),
-                BorderBrush = Brush("#2A3648"),
+                Background = Brush("#181410"),
+                BorderBrush = Brush("#3A312A"),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(12),
@@ -145,7 +145,7 @@ public sealed class MarkdownPreviewControl : UserControl
                     Text = code,
                     FontFamily = new FontFamily("Consolas, Cascadia Mono, monospace"),
                     FontSize = 12.5,
-                    Foreground = Brush("#E6EDF3"),
+                    Foreground = Brush("#F6F0E8"),
                     TextWrapping = TextWrapping.Wrap
                 }
             });
@@ -192,7 +192,7 @@ public sealed class MarkdownPreviewControl : UserControl
                     Text = text,
                     FontSize = level switch { 1 => 26, 2 => 22, 3 => 18, _ => 16 },
                     FontWeight = FontWeight.Bold,
-                    Foreground = Brush("#7CDAF9"),
+                    Foreground = Brush("#E8A15A"),
                     Margin = new Thickness(0, level == 1 ? 8 : 6, 0, 4),
                     TextWrapping = TextWrapping.Wrap
                 });
@@ -204,9 +204,9 @@ public sealed class MarkdownPreviewControl : UserControl
                 FlushPara();
                 _fallbackPanel.Children.Add(new Border
                 {
-                    BorderBrush = Brush("#0E7490"),
+                    BorderBrush = Brush("#C47A32"),
                     BorderThickness = new Thickness(4, 0, 0, 0),
-                    Background = Brush("#151C26"),
+                    Background = Brush("#221C18"),
                     Padding = new Thickness(12, 8),
                     Margin = new Thickness(0, 4),
                     Child = CreateRichParagraph(line.TrimStart('>', ' '))
@@ -247,7 +247,7 @@ public sealed class MarkdownPreviewControl : UserControl
             TextWrapping = TextWrapping.Wrap,
             FontSize = 14.5,
             LineHeight = 22,
-            Foreground = Brush("#E6EDF3")
+            Foreground = Brush("#F6F0E8")
         };
 
         var inlines = new Avalonia.Controls.Documents.InlineCollection();
@@ -273,7 +273,7 @@ public sealed class MarkdownPreviewControl : UserControl
                 inlines.Add(new Avalonia.Controls.Documents.Run(token[1..^1])
                 {
                     FontFamily = new FontFamily("Consolas, Cascadia Mono, monospace"),
-                    Background = Brush("#1A2330")
+                    Background = Brush("#2A241C")
                 });
             }
             else if (token.StartsWith("[", StringComparison.Ordinal))
@@ -283,7 +283,7 @@ public sealed class MarkdownPreviewControl : UserControl
                 {
                     inlines.Add(new Avalonia.Controls.Documents.Run(lm.Groups[1].Value)
                     {
-                        Foreground = Brush("#5EC8F0"),
+                        Foreground = Brush("#E8A15A"),
                         TextDecorations = TextDecorations.Underline
                     });
                 }

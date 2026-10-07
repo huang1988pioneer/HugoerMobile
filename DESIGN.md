@@ -64,7 +64,7 @@ flowchart TD
 3. **原生手勢取代選單**：Android 使用 `SwipeToDismissBox` / Pull-to-refresh，iOS 使用 `.swipeActions` / `.refreshable`。
 4. **漸進式表單**：設定檔/前置資料使用分段控制與摺疊區塊，避免一次塞爆直向長表單。
 5. **離線可讀、線上可寫的取捨**：讀取結果保留在 App 狀態與本機 profile；寫入、套用設定、觸發部署需要網路，並清楚呈現未儲存狀態與錯誤訊息。
-6. **深色模式**：Android Material 3 dynamic/dark color scheme；iOS 使用 SwiftUI semantic/system colors，跟隨系統外觀。
+6. **外觀**：桌面版固定暖墨色底與銅色重點。Android 與 iOS 使用同一套銅棕色，並跟隨系統淺色／深色，不採用桌布動態取色。
 7. **鍵盤最佳化**：baseURL 使用 URL keyboard；Tags/Categories 用逗號分隔；Markdown 編輯器提供適合觸控的編輯/預覽切換。
 8. **危險操作二次確認**：刪除文章、覆蓋遠端設定前跳出原生確認對話框。
 9. **狀態先於資料**：GitHub 分頁優先呈現建置狀態大卡片，細節往下捲動才看到。

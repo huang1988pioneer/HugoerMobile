@@ -6,10 +6,6 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="24">
         <StackPanel Spacing="16" MaxWidth="980">
-            <TextBlock Text="GitHub Pages" Classes="pageTitle"/>
-            <TextBlock Text="將網站推上 GitHub，以 GitHub Actions 部署 Pages，並查詢上線狀態。"
-                       Classes="muted" TextWrapping="Wrap"/>
-
             <Border Classes="card">
                 <StackPanel Spacing="8">
                     <TextBlock Text="本機工具" Classes="sectionTitle"/>
@@ -23,7 +19,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Classes="card" BorderBrush="#0E7490" BorderThickness="1">
+            <Border Classes="featured">
                 <StackPanel Spacing="12">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Spacing="3">
@@ -31,8 +27,8 @@
                             <TextBlock Text="貼上 repository 網址，Hugoer 會辨識 Pages 類型、同步 baseURL，安全合併遠端內容後部署。"
                                        Classes="caption" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <Border Grid.Column="1" Classes="pill" Padding="10,4" VerticalAlignment="Top">
-                            <TextBlock Text="推薦" Foreground="#67D8FF" FontWeight="SemiBold" FontSize="12"/>
+                        <Border Grid.Column="1" Classes="chip" VerticalAlignment="Top">
+                            <TextBlock Text="推薦" Foreground="#F0C48A" FontWeight="SemiBold" FontSize="12"/>
                         </Border>
                     </Grid>
 
@@ -40,8 +36,7 @@
                              PlaceholderText="https://github.com/owner/owner.github.io"
                              FontFamily="Consolas, Cascadia Mono, monospace"/>
 
-                    <Border Background="#101720" BorderBrush="#2A3648" BorderThickness="1"
-                            CornerRadius="8" Padding="12">
+                    <Border Classes="inset">
                         <TextBlock Text="{Binding RepositoryTargetSummary}" TextWrapping="Wrap"
                                    Classes="muted" LineHeight="20"/>
                     </Border>

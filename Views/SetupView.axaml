@@ -6,10 +6,6 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="24">
         <StackPanel Spacing="16" MaxWidth="980">
-            <TextBlock Text="環境設定" Classes="pageTitle"/>
-            <TextBlock Text="一鍵安裝 Hugo、建立新站或開啟既有網站，並可本機預覽與建置。"
-                       Classes="muted" TextWrapping="Wrap"/>
-
             <Border Classes="card">
                 <StackPanel Spacing="12">
                     <TextBlock Text="Hugo 引擎" Classes="sectionTitle"/>

@@ -10,55 +10,75 @@
         Width="1180" Height="760"
         MinWidth="960" MinHeight="640"
         Title="Hugoer — Hugo 一站式工作台"
+        Background="#12100E"
         TransparencyLevelHint="None">
 
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,*">
-        <Border Grid.Row="0" Classes="topBar" Padding="16,12">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="Hugoer" Classes="appTitle" VerticalAlignment="Center"/>
-                    <Border Classes="pill" Padding="10,4" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding SiteBanner}" Classes="muted" TextWrapping="NoWrap"/>
+    <Grid ColumnDefinitions="248,*">
+        <Border Grid.Column="0" Classes="sidebar" Padding="16,20,14,16">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="6,0,6,22">
+                    <Border Classes="mark">
+                        <TextBlock Text="H"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#1A120C"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
                     </Border>
+                    <StackPanel VerticalAlignment="Center" Spacing="1">
+                        <TextBlock Text="Hugoer" Classes="appTitle"/>
+                        <TextBlock Text="網站工作台" Classes="caption"/>
+                    </StackPanel>
                 </StackPanel>
-                <TextBlock Grid.Column="1"
-                           Text="{Binding AppStatus}"
-                           Classes="muted"
-                           VerticalAlignment="Center"
-                           Margin="12,0,0,0"/>
-            </Grid>
+
+                <Border DockPanel.Dock="Bottom" Classes="siteChip" Padding="12,10" Margin="2,16,2,2">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="目前網站" Classes="caption"/>
+                        <TextBlock Text="{Binding SiteBanner}"
+                                   FontSize="12"
+                                   Foreground="#F6F0E8"
+                                   TextWrapping="Wrap"
+                                   MaxHeight="64"/>
+                    </StackPanel>
+                </Border>
+
+                <ListBox ItemsSource="{Binding NavItems}"
+                         SelectedItem="{Binding SelectedNav}"
+                         Classes="navList"
+                         Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:NavItem">
+                            <TextBlock Text="{Binding Title}"
+                                       FontWeight="SemiBold"
+                                       FontSize="15"
+                                       Margin="4,6"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
         </Border>
 
-        <Grid Grid.Row="1" ColumnDefinitions="220,*">
-            <Border Grid.Column="0" Classes="sidebar" Padding="12,8">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Bottom" Margin="4,12,4,8" Spacing="4">
-                        <TextBlock Text="Hugo · Themes · Pages" Classes="caption"/>
-                        <TextBlock Text="Local tool · Traditional Chinese UI" Classes="caption"/>
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <Border Grid.Row="0" Classes="topBar" Padding="28,16">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="3" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding SelectedNav.Title}" Classes="pageTitle"/>
+                        <TextBlock Text="{Binding SelectedNav.Description}"
+                                   Classes="muted"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
-
-                    <ListBox ItemsSource="{Binding NavItems}"
-                             SelectedItem="{Binding SelectedNav}"
-                             Classes="navList"
-                             Background="Transparent">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate x:DataType="vm:NavItem">
-                                <StackPanel Spacing="2" Margin="4,8">
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"/>
-                                    <TextBlock Text="{Binding Description}" Classes="caption" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </DockPanel>
+                    <Border Grid.Column="1" Classes="pill" Padding="12,6" Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding AppStatus}" Classes="muted" TextWrapping="NoWrap"/>
+                    </Border>
+                </Grid>
             </Border>
 
-            <Border Grid.Column="1" Classes="contentHost" Padding="0">
-                <ContentControl Content="{Binding CurrentPage}" Margin="0"/>
+            <Border Grid.Row="1" Classes="contentHost">
+                <ContentControl Content="{Binding CurrentPage}"/>
             </Border>
         </Grid>
     </Grid>

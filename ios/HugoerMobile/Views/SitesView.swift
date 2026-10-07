@@ -14,7 +14,7 @@ struct SitesView: View {
                         VStack(spacing: 12) {
                             Image(systemName: "server.rack")
                                 .font(.system(size: 40))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(HugoerColor.accent)
                             Text("尚未連結任何 GitHub 網站")
                                 .font(.headline)
                             Text("點擊下方按鈕，連結你的第一個 Hugo 網站 repo。")
@@ -109,9 +109,12 @@ private struct SiteRow: View {
             }
             Spacer()
             if isActive {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-                    .font(.title3)
+                Text("使用中")
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(HugoerColor.accent.opacity(0.16), in: Capsule())
+                    .foregroundStyle(HugoerColor.accent)
             }
         }
         .padding(.vertical, 6)

@@ -9,10 +9,10 @@ class MarkdownPreviewService {
 
     fun renderToHtmlDocument(markdown: String, isDarkMode: Boolean): String {
         val body = MarkdownToHtml.convert(markdown)
-        val bg = if (isDarkMode) "#141318" else "#F6F5FA"
-        val fg = if (isDarkMode) "#F2F1F7" else "#1B1B1F"
-        val codeBg = if (isDarkMode) "#26242E" else "#EFEDF5"
-        val link = "#6E56CF"
+        val bg = if (isDarkMode) "#161310" else "#FBF7F2"
+        val fg = if (isDarkMode) "#F6F0E8" else "#1C1612"
+        val codeBg = if (isDarkMode) "#221C18" else "#F3EBE3"
+        val link = if (isDarkMode) "#E8A15A" else "#8C4E1A"
 
         return """
             <!DOCTYPE html>

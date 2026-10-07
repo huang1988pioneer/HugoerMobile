@@ -45,7 +45,7 @@ public sealed class QuillMarkdownEditor : UserControl
     {
         _webView = new NativeWebView
         {
-            Background = new SolidColorBrush(Color.Parse("#1C1B1F"))
+            Background = new SolidColorBrush(Color.Parse("#161310"))
         };
         _webView.EnvironmentRequested += OnEnvironmentRequested;
         _webView.NavigationStarted += OnNavigationStarted;

@@ -17,11 +17,11 @@ public partial class MainViewModel : ViewModelBase
 
         NavItems =
         [
-            new NavItem("環境", "一鍵安裝 Hugo、建立／開啟網站", SetupPage),
-            new NavItem("設定檔", "編輯 hugo.toml 等設定", ConfigPage),
-            new NavItem("主題", "安裝 Stack 等 themes", ThemesPage),
-            new NavItem("內容", "編輯 Markdown content", ContentPage),
-            new NavItem("GitHub", "推送並啟用 GitHub Pages", GitHubPage),
+            new NavItem("環境", "安裝 Hugo、建立新站或開啟既有網站，並在本機預覽與建置。", SetupPage),
+            new NavItem("設定檔", "網站基本欄位、Hugo 進階設定、主題 params，以及原始 TOML。", ConfigPage),
+            new NavItem("主題", "安裝熱門主題（推薦 Stack），並編輯主題與站點設定。", ThemesPage),
+            new NavItem("內容", "瀏覽 content/，以 Quill 撰寫內文並即時預覽。儲存仍是 Markdown。", ContentPage),
+            new NavItem("GitHub", "推上 GitHub，用 Actions 部署 Pages，並查看上線狀態。", GitHubPage),
         ];
 
         SelectedNav = NavItems[0];
@@ -65,8 +65,8 @@ public partial class MainViewModel : ViewModelBase
     {
         var path = AppServices.Instance.CurrentSitePath;
         SiteBanner = string.IsNullOrWhiteSpace(path)
-            ? "尚未選擇網站 — 請到「環境」開啟或建立"
-            : $"目前網站：{path}";
+            ? "尚未選擇。請到「環境」開啟或建立。"
+            : path;
     }
 }
 
