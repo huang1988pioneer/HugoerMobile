@@ -34,6 +34,20 @@ public sealed partial class FrontMatterService
         };
     }
 
+    /// <summary>
+    /// Replaces the Markdown body and leaves an existing front matter block byte-for-byte intact.
+    /// </summary>
+    public string ReplaceBody(string text, string body)
+    {
+        text ??= string.Empty;
+        body ??= string.Empty;
+        var match = YamlBlockRegex().Match(text);
+        if (!match.Success)
+            return body;
+
+        return text[..match.Length] + body.TrimStart('\r', '\n');
+    }
+
     public string Write(FrontMatterDocument document)
     {
         var fields = document.Fields;

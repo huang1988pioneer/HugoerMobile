@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Hugoer.Helpers;
 using Hugoer.Models;
 using Hugoer.Services;
 
@@ -20,6 +21,22 @@ public partial class ContentViewModel : PageViewModelBase
 
     [ObservableProperty]
     public partial string EditorText { get; set; } = string.Empty;
+
+    /// <summary>Markdown body edited by Quill. Front matter stays in <see cref="EditorText"/>.</summary>
+    [ObservableProperty]
+    public partial string EditorBody { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial bool SourceMode { get; set; }
+
+    [ObservableProperty]
+    public partial string SourceModeLabel { get; set; } = "Markdown 原始碼";
+
+    [ObservableProperty]
+    public partial string EditorBaseUrl { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string EditorDocumentPath { get; set; } = string.Empty;
 
     /// <summary>Markdown body bound to live preview (same as editor; control strips front matter).</summary>
     [ObservableProperty]
@@ -72,13 +89,21 @@ public partial class ContentViewModel : PageViewModelBase
 
     private bool _loading;
     private bool _syncingFrontMatter;
+    private bool _syncingBody;
     private List<ContentItem> _all = [];
     private CancellationTokenSource? _previewCts;
 
     public override Task OnNavigatedToAsync()
     {
+        RefreshEditorContext();
         Refresh();
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private void ToggleSourceMode()
+    {
+        SourceMode = !SourceMode;
     }
 
     partial void OnSelectedFileChanged(ContentItem? value)
@@ -97,6 +122,48 @@ public partial class ContentViewModel : PageViewModelBase
             PopulateFrontMatter(value);
 
         SchedulePreviewUpdate(value);
+
+        if (_syncingBody)
+            return;
+
+        var body = Services.FrontMatter.Parse(value).Body;
+        if (body == EditorBody)
+            return;
+
+        _syncingBody = true;
+        try
+        {
+            EditorBody = body;
+        }
+        finally
+        {
+            _syncingBody = false;
+        }
+    }
+
+    partial void OnEditorBodyChanged(string value)
+    {
+        if (_loading || _syncingBody || _syncingFrontMatter)
+            return;
+
+        var next = Services.FrontMatter.ReplaceBody(EditorText, value);
+        if (next == EditorText)
+            return;
+
+        _syncingBody = true;
+        try
+        {
+            EditorText = next;
+        }
+        finally
+        {
+            _syncingBody = false;
+        }
+    }
+
+    partial void OnSourceModeChanged(bool value)
+    {
+        SourceModeLabel = value ? "所見即所得" : "Markdown 原始碼";
     }
 
     private void UpdateEditorStatistics(string markdown)
@@ -188,6 +255,8 @@ public partial class ContentViewModel : PageViewModelBase
         _loading = true;
         try
         {
+            RefreshEditorContext();
+            EditorDocumentPath = "content/" + item.RelativePath.Replace('\\', '/');
             EditorText = await Services.Content.ReadAsync(item.FullPath);
             PreviewMarkdown = EditorText;
             PopulateFrontMatter(EditorText);
@@ -261,6 +330,7 @@ public partial class ContentViewModel : PageViewModelBase
             Services.Content.Delete(SelectedFile.FullPath);
             StatusMessage = $"已刪除：{SelectedFile.RelativePath}";
             SelectedFile = null;
+            EditorDocumentPath = string.Empty;
             EditorText = string.Empty;
             PreviewMarkdown = string.Empty;
             Refresh();
@@ -349,6 +419,37 @@ public partial class ContentViewModel : PageViewModelBase
         {
             _syncingFrontMatter = false;
         }
+    }
+
+    private void RefreshEditorContext()
+    {
+        EditorBaseUrl = RequireSite(out var site) ? ReadBaseUrl(site) : string.Empty;
+    }
+
+    private static string ReadBaseUrl(string sitePath)
+    {
+        var config = PathHelper.FindConfigFile(sitePath);
+        if (config is null)
+            return string.Empty;
+
+        foreach (var raw in File.ReadLines(config))
+        {
+            var line = raw.Trim();
+            if (line.Length == 0 || line.StartsWith('#') || line.StartsWith("//"))
+                continue;
+
+            var separator = line.IndexOfAny(['=', ':']);
+            if (separator <= 0)
+                continue;
+
+            var key = line[..separator].Trim();
+            if (!key.Equals("baseURL", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            return line[(separator + 1)..].Trim().Trim('"', '\'', '`');
+        }
+
+        return string.Empty;
     }
 
     private static string GetField(FrontMatterDocument document, string key) =>

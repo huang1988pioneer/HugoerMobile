@@ -1,9 +1,11 @@
 /*
- * Hugoer rich Markdown editor (Quill) hosted by the native iOS / Android apps.
+ * Hugoer rich Markdown editor (Quill) hosted by the desktop, iOS, and Android apps.
  *
  * Native -> page:  window.HugoerEditor.setContent({ markdown, baseURL, documentPath, dark })
- * Page -> native:  JSON strings { type: 'ready' | 'change' | 'error', ... } posted to
- *                  webkit.messageHandlers.hugoer (iOS) or hugoerBridge (Android).
+ *                  window.HugoerEditor.setContext({ baseURL, documentPath, dark })
+ * Page -> native:  JSON { type: 'ready' | 'change' | 'save' | 'error', ... } posted to
+ *                  webkit.messageHandlers.hugoer (iOS), hugoerBridge (Android),
+ *                  or invokeCSharpAction (Avalonia NativeWebView).
  */
 (function () {
   'use strict';
@@ -28,6 +30,8 @@
         window.webkit.messageHandlers.hugoer.postMessage(payload);
       } else if (window.hugoerBridge) {
         window.hugoerBridge.postMessage(payload);
+      } else if (typeof invokeCSharpAction === 'function') {
+        invokeCSharpAction(message);
       }
     } catch (error) {
       // The host went away; nothing useful to do.
@@ -474,6 +478,13 @@
   window.addEventListener('pagehide', function () {
     if (timer) flush();
   });
+  document.addEventListener('keydown', function (event) {
+    if ((event.metaKey || event.ctrlKey) && (event.key === 's' || event.key === 'S')) {
+      event.preventDefault();
+      flush();
+      post({ type: 'save' });
+    }
+  }, true);
 
   function setTheme(dark) {
     if (dark === true) document.documentElement.setAttribute('data-theme', 'dark');
@@ -481,12 +492,17 @@
     else document.documentElement.removeAttribute('data-theme');
   }
 
+  function applyContext(options) {
+    options = options || {};
+    if ('baseURL' in options) context.baseURL = options.baseURL || '';
+    if ('documentPath' in options) context.documentPath = options.documentPath || '';
+    if ('dark' in options) setTheme(options.dark);
+  }
+
   window.HugoerEditor = {
     setContent: function (options) {
       options = options || {};
-      context.baseURL = options.baseURL || '';
-      context.documentPath = options.documentPath || '';
-      if ('dark' in options) setTheme(options.dark);
+      applyContext(options);
       var markdown = String(options.markdown || '');
       clearTimeout(timer);
       timer = null;
@@ -495,6 +511,7 @@
       // Unedited documents are never re-serialised, so opening a post is lossless.
       lastMarkdown = markdown;
     },
+    setContext: applyContext,
     getMarkdown: flush,
     setTheme: setTheme,
     focus: function () { quill.focus(); }
